@@ -41,7 +41,8 @@ int tests_failed = 0;
  * test_nvm_pool (placed in FRAM on MSP430, plain memory on host).
  */
 
-uint8_t test_sram_pool[TEST_SRAM_POOL_SIZE];
+uint8_t __attribute__((aligned(TIKU_MEM_ARCH_ALIGNMENT)))
+    test_sram_pool[TEST_SRAM_POOL_SIZE];
 
 #ifdef PLATFORM_MSP430
 uint8_t __attribute__((section(".persistent")))

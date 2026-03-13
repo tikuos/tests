@@ -41,7 +41,7 @@ void test_htimer_basic(void)
 {
     int ret;
     tiku_htimer_clock_t target;
-    unsigned int wait_loops;
+    unsigned long wait_loops;
 
     TEST_GROUP_BEGIN("Hardware Timer Basic");
 
@@ -49,9 +49,17 @@ void test_htimer_basic(void)
 
     tiku_htimer_init();
 
-    /* Schedule 100ms from now */
+    /* Schedule TEST_HTIMER_PERIOD ticks from now */
     target = TIKU_HTIMER_NOW() + TEST_HTIMER_PERIOD;
     ret = tiku_htimer_set(&basic_ht, target, test_htimer_basic_cb, NULL);
+
+    /*
+     * Capture scheduled state immediately, before any UART I/O.
+     * At 9600 baud the TEST_ASSERT printf takes ~36 ms, long enough
+     * for the hardware timer ISR to fire and clear 'pending' before
+     * we can check it.
+     */
+    int is_sched = tiku_htimer_is_scheduled();
 
     TEST_ASSERT(ret == TIKU_HTIMER_OK, "tiku_htimer_set succeeded");
     if (ret != TIKU_HTIMER_OK) {
@@ -59,7 +67,7 @@ void test_htimer_basic(void)
     }
 
     /* Verify it's scheduled */
-    TEST_ASSERT(tiku_htimer_is_scheduled(), "HTimer reports scheduled");
+    TEST_ASSERT(is_sched, "HTimer reports scheduled");
 
     /* Wait for ISR to fire (busy-wait with timeout) */
     for (wait_loops = 0; wait_loops < 50000; wait_loops++) {

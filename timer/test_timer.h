@@ -37,7 +37,7 @@
 #define TEST_TIMER_PERIODIC_CNT 3
 #define TEST_TIMER_DRAIN_MAX    500  /* max scheduler loops */
 
-#define TEST_HTIMER_PERIOD      (TIKU_HTIMER_SECOND / 10)  /* 100 ms */
+#define TEST_HTIMER_PERIOD      (TIKU_HTIMER_SECOND / 40)  /* 25 ms */
 #define TEST_HTIMER_REPEAT_CNT  5
 
 /*---------------------------------------------------------------------------*/

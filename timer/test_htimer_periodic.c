@@ -28,18 +28,26 @@
 #if TEST_HTIMER_PERIODIC
 
 static volatile unsigned int htimer_periodic_count = 0;
+static volatile int htimer_periodic_resched_err = 0;
 static struct tiku_htimer periodic_ht;
 
 static void test_htimer_periodic_cb(struct tiku_htimer *t, void *ptr)
 {
     htimer_periodic_count++;
-    TEST_PRINTF("HTimer periodic: tick %u/%u\n",
-                htimer_periodic_count, TEST_HTIMER_REPEAT_CNT);
 
     if (htimer_periodic_count < TEST_HTIMER_REPEAT_CNT) {
-        /* Drift-free reschedule from the scheduled time */
-        tiku_htimer_set(t, TIKU_HTIMER_TIME(t) + TEST_HTIMER_PERIOD,
-                        test_htimer_periodic_cb, NULL);
+        /*
+         * Reschedule only — no UART I/O in ISR context.
+         * Printf at 9600 baud takes ~31 ms per line, longer than
+         * TEST_HTIMER_PERIOD (25 ms).  Doing I/O here caused the
+         * drift-free targets to fall behind 'now', making later
+         * tiku_htimer_set() calls fail the guard check silently.
+         */
+        int r = tiku_htimer_set(t, TIKU_HTIMER_TIME(t) + TEST_HTIMER_PERIOD,
+                                test_htimer_periodic_cb, NULL);
+        if (r != TIKU_HTIMER_OK) {
+            htimer_periodic_resched_err = r;
+        }
     }
 }
 
@@ -47,7 +55,7 @@ void test_htimer_periodic(void)
 {
     int ret;
     tiku_htimer_clock_t target;
-    unsigned int wait_loops;
+    unsigned long wait_loops;
 
     TEST_GROUP_BEGIN("Hardware Timer Periodic");
 
@@ -55,7 +63,7 @@ void test_htimer_periodic(void)
 
     tiku_htimer_init();
 
-    /* Schedule first tick 100ms from now */
+    /* Schedule first tick TEST_HTIMER_PERIOD ticks from now */
     target = TIKU_HTIMER_NOW() + TEST_HTIMER_PERIOD;
     ret = tiku_htimer_set(&periodic_ht, target,
                           test_htimer_periodic_cb, NULL);
@@ -72,6 +80,13 @@ void test_htimer_periodic(void)
         }
         __no_operation();
     }
+
+    TEST_PRINTF("HTimer periodic: %u/%u ticks fired",
+                htimer_periodic_count, TEST_HTIMER_REPEAT_CNT);
+    if (htimer_periodic_resched_err) {
+        TEST_PRINTF(" (resched err=%d)", htimer_periodic_resched_err);
+    }
+    TEST_PRINTF("\n");
 
     TEST_ASSERT(htimer_periodic_count == TEST_HTIMER_REPEAT_CNT,
                 "HTimer periodic completed expected ticks");

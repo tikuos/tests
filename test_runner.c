@@ -96,6 +96,9 @@ static void test_run_kits(void);
 
 void test_run_all(void)
 {
+    /* Wait for host serial monitor to connect after flash */
+    tiku_common_delay_ms(2000);
+
     TEST_SUITE_BEGIN("TikuOS");
 
     /* Pre-interrupt tests */

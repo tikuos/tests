@@ -181,28 +181,30 @@ void test_mpu_all_segments(void)
 
     tiku_mpu_init();
 
-    /* Set each segment to a different permission */
-    tiku_mpu_set_permissions(TIKU_MPU_SEG1, TIKU_MPU_READ);      /* 0x1 */
-    tiku_mpu_set_permissions(TIKU_MPU_SEG2, TIKU_MPU_RD_WR);     /* 0x3 */
-    tiku_mpu_set_permissions(TIKU_MPU_SEG3, TIKU_MPU_ALL);        /* 0x7 */
+    /* Set each segment to a different permission.
+     * SEG1 contains .text and .rodata — must keep R+X to avoid
+     * faulting the running CPU.  Use SEG2/SEG3 for non-exec perms. */
+    tiku_mpu_set_permissions(TIKU_MPU_SEG1, TIKU_MPU_ALL);       /* 0x7 */
+    tiku_mpu_set_permissions(TIKU_MPU_SEG2, TIKU_MPU_READ);      /* 0x1 */
+    tiku_mpu_set_permissions(TIKU_MPU_SEG3, TIKU_MPU_RD_WR);     /* 0x3 */
 
     sam = tiku_mpu_arch_get_sam();
-    TEST_ASSERT((sam & 0x000F) == 0x0001,
-                "segment 1 is READ-only (0x1)");
-    TEST_ASSERT((sam & 0x00F0) == 0x0030,
-                "segment 2 is RD_WR (0x3)");
-    TEST_ASSERT((sam & 0x0F00) == 0x0700,
-                "segment 3 is ALL (0x7)");
+    TEST_ASSERT((sam & 0x000F) == 0x0007,
+                "segment 1 is ALL (0x7)");
+    TEST_ASSERT((sam & 0x00F0) == 0x0010,
+                "segment 2 is READ-only (0x1)");
+    TEST_ASSERT((sam & 0x0F00) == 0x0300,
+                "segment 3 is RD_WR (0x3)");
 
     /* Now change segment 2 alone — 1 and 3 must stay */
     tiku_mpu_set_permissions(TIKU_MPU_SEG2, TIKU_MPU_EXEC);      /* 0x4 */
 
     sam = tiku_mpu_arch_get_sam();
-    TEST_ASSERT((sam & 0x000F) == 0x0001,
+    TEST_ASSERT((sam & 0x000F) == 0x0007,
                 "segment 1 unchanged after seg2 update");
     TEST_ASSERT((sam & 0x00F0) == 0x0040,
                 "segment 2 now EXEC-only (0x4)");
-    TEST_ASSERT((sam & 0x0F00) == 0x0700,
+    TEST_ASSERT((sam & 0x0F00) == 0x0300,
                 "segment 3 unchanged after seg2 update");
     TEST_GROUP_END("MPU All Segments Independent");
 }
@@ -217,37 +219,38 @@ void test_mpu_permission_flags(void)
 
     TEST_GROUP_BEGIN("MPU Permission Flags");
 
-    /* Test each permission enum value on segment 1 (bits [3:0]) */
+    /* Test each permission enum value on segment 2 (bits [7:4]).
+     * Segment 1 contains .text — changing its permissions would fault. */
 
     tiku_mpu_init();
-    tiku_mpu_set_permissions(TIKU_MPU_SEG1, TIKU_MPU_READ);
+    tiku_mpu_set_permissions(TIKU_MPU_SEG2, TIKU_MPU_READ);
     sam = tiku_mpu_arch_get_sam();
-    TEST_ASSERT((sam & 0x000F) == 0x0001,
+    TEST_ASSERT((sam & 0x00F0) == 0x0010,
                 "TIKU_MPU_READ maps to 0x01");
 
-    tiku_mpu_set_permissions(TIKU_MPU_SEG1, TIKU_MPU_WRITE);
+    tiku_mpu_set_permissions(TIKU_MPU_SEG2, TIKU_MPU_WRITE);
     sam = tiku_mpu_arch_get_sam();
-    TEST_ASSERT((sam & 0x000F) == 0x0002,
+    TEST_ASSERT((sam & 0x00F0) == 0x0020,
                 "TIKU_MPU_WRITE maps to 0x02");
 
-    tiku_mpu_set_permissions(TIKU_MPU_SEG1, TIKU_MPU_EXEC);
+    tiku_mpu_set_permissions(TIKU_MPU_SEG2, TIKU_MPU_EXEC);
     sam = tiku_mpu_arch_get_sam();
-    TEST_ASSERT((sam & 0x000F) == 0x0004,
+    TEST_ASSERT((sam & 0x00F0) == 0x0040,
                 "TIKU_MPU_EXEC maps to 0x04");
 
-    tiku_mpu_set_permissions(TIKU_MPU_SEG1, TIKU_MPU_RD_WR);
+    tiku_mpu_set_permissions(TIKU_MPU_SEG2, TIKU_MPU_RD_WR);
     sam = tiku_mpu_arch_get_sam();
-    TEST_ASSERT((sam & 0x000F) == 0x0003,
+    TEST_ASSERT((sam & 0x00F0) == 0x0030,
                 "TIKU_MPU_RD_WR maps to 0x03");
 
-    tiku_mpu_set_permissions(TIKU_MPU_SEG1, TIKU_MPU_RD_EXEC);
+    tiku_mpu_set_permissions(TIKU_MPU_SEG2, TIKU_MPU_RD_EXEC);
     sam = tiku_mpu_arch_get_sam();
-    TEST_ASSERT((sam & 0x000F) == 0x0005,
+    TEST_ASSERT((sam & 0x00F0) == 0x0050,
                 "TIKU_MPU_RD_EXEC maps to 0x05");
 
-    tiku_mpu_set_permissions(TIKU_MPU_SEG1, TIKU_MPU_ALL);
+    tiku_mpu_set_permissions(TIKU_MPU_SEG2, TIKU_MPU_ALL);
     sam = tiku_mpu_arch_get_sam();
-    TEST_ASSERT((sam & 0x000F) == 0x0007,
+    TEST_ASSERT((sam & 0x00F0) == 0x0070,
                 "TIKU_MPU_ALL maps to 0x07");
     TEST_GROUP_END("MPU Permission Flags");
 }
@@ -292,35 +295,36 @@ void test_mpu_unlock_custom_base(void)
 
     tiku_mpu_init();
 
-    /* Set segment 1 to READ-only (0x1), seg 2 to EXEC (0x4), seg 3 to R+X (0x5) */
-    tiku_mpu_set_permissions(TIKU_MPU_SEG1, TIKU_MPU_READ);
-    tiku_mpu_set_permissions(TIKU_MPU_SEG2, TIKU_MPU_EXEC);
+    /* Set seg 1 to ALL (0x7), seg 2 to READ (0x1), seg 3 keeps default R+X (0x5).
+     * SEG1 contains .text — must keep R+X to avoid faulting the CPU. */
+    tiku_mpu_set_permissions(TIKU_MPU_SEG1, TIKU_MPU_ALL);
+    tiku_mpu_set_permissions(TIKU_MPU_SEG2, TIKU_MPU_READ);
     /* seg 3 keeps default 0x5 */
 
-    TEST_ASSERT(tiku_mpu_arch_get_sam() == 0x0541,
-                "custom base is 0x0541");
+    TEST_ASSERT(tiku_mpu_arch_get_sam() == 0x0517,
+                "custom base is 0x0517");
 
     saved = tiku_mpu_unlock_nvm();
-    TEST_ASSERT(saved == 0x0541,
-                "unlock returns custom base (0x0541)");
+    TEST_ASSERT(saved == 0x0517,
+                "unlock returns custom base (0x0517)");
 
-    /* Unlock should OR 0x0222 into each segment: 0x0541 | 0x0222 = 0x0763 */
+    /* Unlock should OR 0x0222 into each segment: 0x0517 | 0x0222 = 0x0737 */
     sam = tiku_mpu_arch_get_sam();
-    TEST_ASSERT(sam == 0x0763,
-                "SAM is 0x0763 after unlock (custom base | write)");
+    TEST_ASSERT(sam == 0x0737,
+                "SAM is 0x0737 after unlock (custom base | write)");
 
     /* Verify each segment got write bit without losing existing bits */
-    TEST_ASSERT((sam & 0x000F) == 0x0003,
-                "seg1: READ | WRITE = 0x3");
-    TEST_ASSERT((sam & 0x00F0) == 0x0060,
-                "seg2: EXEC | WRITE = 0x6");
+    TEST_ASSERT((sam & 0x000F) == 0x0007,
+                "seg1: ALL | WRITE = 0x7");
+    TEST_ASSERT((sam & 0x00F0) == 0x0030,
+                "seg2: READ | WRITE = 0x3");
     TEST_ASSERT((sam & 0x0F00) == 0x0700,
                 "seg3: R+X | WRITE = 0x7");
 
     /* Lock restores original custom base */
     tiku_mpu_lock_nvm(saved);
-    TEST_ASSERT(tiku_mpu_arch_get_sam() == 0x0541,
-                "lock restores custom base 0x0541");
+    TEST_ASSERT(tiku_mpu_arch_get_sam() == 0x0517,
+                "lock restores custom base 0x0517");
     TEST_GROUP_END("MPU Unlock Custom Base");
 }
 
@@ -343,12 +347,13 @@ void test_mpu_scoped_write_custom(void)
 
     tiku_mpu_init();
 
-    /* Set segment 1 to EXEC-only before scoped write */
-    tiku_mpu_set_permissions(TIKU_MPU_SEG1, TIKU_MPU_EXEC);
+    /* Set segment 2 to EXEC-only before scoped write.
+     * SEG1 contains .text and .rodata — must keep R+X. */
+    tiku_mpu_set_permissions(TIKU_MPU_SEG2, TIKU_MPU_EXEC);
 
-    /* baseline: seg1=0x4, seg2=0x5, seg3=0x5 → 0x0554 */
-    TEST_ASSERT(tiku_mpu_arch_get_sam() == 0x0554,
-                "custom base is 0x0554 before scoped write");
+    /* baseline: seg1=0x5, seg2=0x4, seg3=0x5 → 0x0545 */
+    TEST_ASSERT(tiku_mpu_arch_get_sam() == 0x0545,
+                "custom base is 0x0545 before scoped write");
 
     ctx.called = 0;
     ctx.sam_during = 0;
@@ -357,12 +362,12 @@ void test_mpu_scoped_write_custom(void)
 
     TEST_ASSERT(ctx.called == 1,
                 "callback invoked with custom base");
-    /* During: 0x0554 | 0x0222 = 0x0776 */
-    TEST_ASSERT(ctx.sam_during == 0x0776,
-                "SAM had write bits during callback (0x0776)");
+    /* During: 0x0545 | 0x0222 = 0x0767 */
+    TEST_ASSERT(ctx.sam_during == 0x0767,
+                "SAM had write bits during callback (0x0767)");
     /* After: restored to custom base */
-    TEST_ASSERT(tiku_mpu_arch_get_sam() == 0x0554,
-                "SAM restored to custom base 0x0554 after scoped write");
+    TEST_ASSERT(tiku_mpu_arch_get_sam() == 0x0545,
+                "SAM restored to custom base 0x0545 after scoped write");
     TEST_GROUP_END("MPU Scoped Write Custom Base");
 }
 
