@@ -73,7 +73,7 @@ TIKU_PROCESS_THREAD(test_force_proc, ev, data)
 
 void test_process_graceful_exit(void)
 {
-    TEST_PRINTF("\n=== Test: Graceful Exit vs Force Exit ===\n");
+    TEST_GROUP_BEGIN("Graceful Exit vs Force Exit");
 
     ge_cleanup_done = 0;
     fe_cleanup_done = 0;
@@ -95,19 +95,9 @@ void test_process_graceful_exit(void)
         /* drain */
     }
 
-    if (ge_cleanup_done == 1) {
-        TEST_PRINTF("PASS: Graceful process ran cleanup\n");
-        tiku_common_led1_toggle();
-    } else {
-        TEST_PRINTF("FAIL: Graceful process did not run cleanup\n");
-    }
+    TEST_ASSERT(ge_cleanup_done == 1, "Graceful process ran cleanup");
 
-    if (!test_graceful_proc.is_running) {
-        TEST_PRINTF("PASS: Graceful process exited after cleanup\n");
-        tiku_common_led1_toggle();
-    } else {
-        TEST_PRINTF("FAIL: Graceful process still running\n");
-    }
+    TEST_ASSERT(!test_graceful_proc.is_running, "Graceful process exited after cleanup");
 
     /*---------------------------------------------------------------*/
     /* Part B: TIKU_EVENT_FORCE_EXIT — unconditional kill            */
@@ -124,22 +114,12 @@ void test_process_graceful_exit(void)
         /* drain */
     }
 
-    if (fe_cleanup_done == 1) {
-        TEST_PRINTF("PASS: Force process thread body executed\n");
-        tiku_common_led1_toggle();
-    } else {
-        TEST_PRINTF("FAIL: Force process thread body did not run\n");
-    }
+    TEST_ASSERT(fe_cleanup_done == 1, "Force process thread body executed");
 
     /* Process must be killed even though thread didn't PT_EXIT */
-    if (!test_force_proc.is_running) {
-        TEST_PRINTF("PASS: Force process killed unconditionally\n");
-        tiku_common_led1_toggle();
-    } else {
-        TEST_PRINTF("FAIL: Force process still running\n");
-    }
+    TEST_ASSERT(!test_force_proc.is_running, "Force process killed unconditionally");
 
-    TEST_PRINTF("Graceful/force exit test completed\n\n");
+    TEST_GROUP_END("Graceful Exit vs Force Exit");
 }
 
 #endif /* TEST_PROCESS_GRACEFUL_EXIT */

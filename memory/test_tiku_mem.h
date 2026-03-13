@@ -24,41 +24,10 @@
 #ifndef TEST_TIKU_MEM_H_
 #define TEST_TIKU_MEM_H_
 
-#include <stdio.h>
 #include <stdint.h>
 #include <string.h>
 #include "kernel/memory/tiku_mem.h"
-
-/*---------------------------------------------------------------------------*/
-/* TEST HARNESS                                                              */
-/*---------------------------------------------------------------------------*/
-
-/*
- * On MSP430 target, bare printf() has no UART backend — route through
- * TIKU_PRINTF.  In host-mode builds, plain printf() works fine.
- */
-#ifdef PLATFORM_MSP430
-#include "tiku.h"
-#define TEST_PRINT(...) TIKU_PRINTF(__VA_ARGS__)
-#else
-#define TEST_PRINT(...) printf(__VA_ARGS__)
-#endif
-
-extern int tests_run;
-extern int tests_passed;
-extern int tests_failed;
-
-#define TEST_ASSERT(cond, msg)                                              \
-    do {                                                                    \
-        tests_run++;                                                        \
-        if (cond) {                                                         \
-            tests_passed++;                                                 \
-            TEST_PRINT("  PASS: %s\n", msg);                                \
-        } else {                                                            \
-            tests_failed++;                                                 \
-            TEST_PRINT("  FAIL: %s\n", msg);                                \
-        }                                                                   \
-    } while (0)
+#include "tests/tiku_test_harness.h"
 
 /** Round @p x up to the platform alignment — mirrors the kernel's align_up */
 #define TEST_ALIGN_UP(x) \

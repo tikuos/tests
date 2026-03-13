@@ -26,6 +26,7 @@
 
 #include "tiku.h"
 #include "kernel/cpu/tiku_common.h"
+#include "tests/tiku_test_harness.h"
 
 /*---------------------------------------------------------------------------*/
 /* SHARED TEST CONSTANTS                                                     */

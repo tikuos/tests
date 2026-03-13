@@ -35,9 +35,9 @@ void test_watchdog_timeout(void)
 {
     TEST_PRINTF("Starting timeout test - SYSTEM WILL RESET!\n");
 
-    TEST_PRINTF("\n=== Test 4: Watchdog Timeout Demo ===\n");
+    TEST_GROUP_BEGIN("Watchdog Timeout Demo");
     TEST_PRINTF("WARNING: System will reset in 3 seconds!\n");
-    TEST_PRINTF("Disconnect debugger if needed.\n\n");
+    TEST_PRINTF("Disconnect debugger if needed.\n");
 
     /* Give time to read the message */
     delay_ms(2000);

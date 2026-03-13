@@ -47,7 +47,7 @@ TIKU_PROCESS_THREAD(test_cc_proc, ev, data)
 
 void test_process_current_cleared(void)
 {
-    TEST_PRINTF("\n=== Test: Current Process Cleared After Dispatch ===\n");
+    TEST_GROUP_BEGIN("Current Process Cleared After Dispatch");
 
     cc_inside_ok = 0;
 
@@ -60,25 +60,14 @@ void test_process_current_cleared(void)
     }
 
     /* Inside the thread, TIKU_THIS() should have been &test_cc_proc */
-    if (cc_inside_ok == 1) {
-        TEST_PRINTF("PASS: TIKU_THIS() valid inside process thread\n");
-        tiku_common_led1_toggle();
-    } else {
-        TEST_PRINTF("FAIL: TIKU_THIS() wrong inside process thread\n");
-    }
+    TEST_ASSERT(cc_inside_ok == 1, "TIKU_THIS() valid inside process thread");
 
     /* After dispatch returns, TIKU_THIS() must be NULL */
-    if (TIKU_THIS() == NULL) {
-        TEST_PRINTF("PASS: TIKU_THIS() is NULL after dispatch\n");
-        tiku_common_led1_toggle();
-    } else {
-        TEST_PRINTF("FAIL: TIKU_THIS() still points to %s\n",
-                     TIKU_THIS()->name);
-    }
+    TEST_ASSERT(TIKU_THIS() == NULL, "TIKU_THIS() is NULL after dispatch");
 
     /* Clean up */
     tiku_process_exit(&test_cc_proc);
-    TEST_PRINTF("Current process cleared test completed\n\n");
+    TEST_GROUP_END("Current Process Cleared After Dispatch");
 }
 
 #endif /* TEST_PROCESS_CURRENT_CLEARED */

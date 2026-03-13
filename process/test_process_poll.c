@@ -52,7 +52,7 @@ void test_process_poll(void)
 {
     unsigned int i;
 
-    TEST_PRINTF("\n=== Test: Process Poll ===\n");
+    TEST_GROUP_BEGIN("Process Poll");
 
     poll_count = 0;
 
@@ -74,17 +74,11 @@ void test_process_poll(void)
         /* drain */
     }
 
-    if (poll_count == TEST_NUM_POLLS) {
-        TEST_PRINTF("PASS: Received all %d poll events\n", TEST_NUM_POLLS);
-        tiku_common_led1_toggle();
-    } else {
-        TEST_PRINTF("FAIL: Expected %d polls, got %d\n",
-                     TEST_NUM_POLLS, poll_count);
-    }
+    TEST_ASSERT(poll_count == TEST_NUM_POLLS, "Received all poll events");
 
     /* Clean up */
     tiku_process_exit(&test_poll_proc);
-    TEST_PRINTF("Process poll test completed\n\n");
+    TEST_GROUP_END("Process Poll");
 }
 
 #endif /* TEST_PROCESS_POLL */

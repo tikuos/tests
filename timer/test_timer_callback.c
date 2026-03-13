@@ -59,7 +59,7 @@ void test_timer_callback(void)
 {
     unsigned int loops;
 
-    TEST_PRINTF("\n=== Test: Callback Timer ===\n");
+    TEST_GROUP_BEGIN("Callback Timer");
 
     callback_count = 0;
 
@@ -87,16 +87,10 @@ void test_timer_callback(void)
         }
     }
 
-    if (callback_count == 1) {
-        TEST_PRINTF("PASS: Callback fired exactly once\n");
-        tiku_common_led1_toggle();
-    } else {
-        TEST_PRINTF("FAIL: Callback count = %u (expected 1)\n",
-                     callback_count);
-    }
+    TEST_ASSERT(callback_count == 1, "Callback fired exactly once");
 
     tiku_process_exit(&test_callback_timer_proc);
-    TEST_PRINTF("Callback timer test completed\n\n");
+    TEST_GROUP_END("Callback Timer");
 }
 
 #endif /* TEST_TIMER_CALLBACK */

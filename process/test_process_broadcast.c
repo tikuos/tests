@@ -69,7 +69,7 @@ TIKU_PROCESS_THREAD(test_bcast_proc_b, ev, data)
 
 void test_process_broadcast(void)
 {
-    TEST_PRINTF("\n=== Test: Broadcast Events ===\n");
+    TEST_GROUP_BEGIN("Broadcast Events");
 
     bcast_count_a = 0;
     bcast_count_b = 0;
@@ -91,21 +91,9 @@ void test_process_broadcast(void)
         /* drain */
     }
 
-    if (bcast_count_a == 1) {
-        TEST_PRINTF("PASS: Process A received broadcast\n");
-        tiku_common_led1_toggle();
-    } else {
-        TEST_PRINTF("FAIL: Process A count = %d (expected 1)\n",
-                     bcast_count_a);
-    }
+    TEST_ASSERT(bcast_count_a == 1, "Process A received broadcast");
 
-    if (bcast_count_b == 1) {
-        TEST_PRINTF("PASS: Process B received broadcast\n");
-        tiku_common_led1_toggle();
-    } else {
-        TEST_PRINTF("FAIL: Process B count = %d (expected 1)\n",
-                     bcast_count_b);
-    }
+    TEST_ASSERT(bcast_count_b == 1, "Process B received broadcast");
 
     /* Post a second broadcast to verify repeated delivery */
     tiku_process_post(TIKU_PROCESS_BROADCAST, TEST_EVENT_CUSTOM, NULL);
@@ -113,18 +101,12 @@ void test_process_broadcast(void)
         /* drain */
     }
 
-    if (bcast_count_a == 2 && bcast_count_b == 2) {
-        TEST_PRINTF("PASS: Both processes received second broadcast\n");
-        tiku_common_led1_toggle();
-    } else {
-        TEST_PRINTF("FAIL: Counts after 2nd broadcast: A=%d B=%d\n",
-                     bcast_count_a, bcast_count_b);
-    }
+    TEST_ASSERT(bcast_count_a == 2 && bcast_count_b == 2, "Both processes received second broadcast");
 
     /* Clean up */
     tiku_process_exit(&test_bcast_proc_a);
     tiku_process_exit(&test_bcast_proc_b);
-    TEST_PRINTF("Broadcast event test completed\n\n");
+    TEST_GROUP_END("Broadcast Events");
 }
 
 #endif /* TEST_PROCESS_BROADCAST */

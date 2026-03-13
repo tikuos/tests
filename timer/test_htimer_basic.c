@@ -43,7 +43,7 @@ void test_htimer_basic(void)
     tiku_htimer_clock_t target;
     unsigned int wait_loops;
 
-    TEST_PRINTF("\n=== Test: Hardware Timer Basic ===\n");
+    TEST_GROUP_BEGIN("Hardware Timer Basic");
 
     htimer_basic_fired = 0;
 
@@ -53,22 +53,13 @@ void test_htimer_basic(void)
     target = TIKU_HTIMER_NOW() + TEST_HTIMER_PERIOD;
     ret = tiku_htimer_set(&basic_ht, target, test_htimer_basic_cb, NULL);
 
-    if (ret == TIKU_HTIMER_OK) {
-        TEST_PRINTF("HTimer basic: scheduled at %u (now=%u)\n",
-                     (unsigned int)target,
-                     (unsigned int)TIKU_HTIMER_NOW());
-    } else {
-        TEST_PRINTF("FAIL: tiku_htimer_set returned %d\n", ret);
+    TEST_ASSERT(ret == TIKU_HTIMER_OK, "tiku_htimer_set succeeded");
+    if (ret != TIKU_HTIMER_OK) {
         return;
     }
 
     /* Verify it's scheduled */
-    if (tiku_htimer_is_scheduled()) {
-        TEST_PRINTF("PASS: HTimer reports scheduled\n");
-        tiku_common_led1_toggle();
-    } else {
-        TEST_PRINTF("FAIL: HTimer not scheduled after set\n");
-    }
+    TEST_ASSERT(tiku_htimer_is_scheduled(), "HTimer reports scheduled");
 
     /* Wait for ISR to fire (busy-wait with timeout) */
     for (wait_loops = 0; wait_loops < 50000; wait_loops++) {
@@ -78,22 +69,12 @@ void test_htimer_basic(void)
         __no_operation();
     }
 
-    if (htimer_basic_fired) {
-        TEST_PRINTF("PASS: HTimer one-shot fired\n");
-        tiku_common_led1_toggle();
-    } else {
-        TEST_PRINTF("FAIL: HTimer did not fire within timeout\n");
-    }
+    TEST_ASSERT(htimer_basic_fired, "HTimer one-shot fired");
 
     /* After one-shot, nothing should be pending */
-    if (!tiku_htimer_is_scheduled()) {
-        TEST_PRINTF("PASS: No htimer scheduled after one-shot\n");
-        tiku_common_led1_toggle();
-    } else {
-        TEST_PRINTF("FAIL: HTimer still scheduled after one-shot\n");
-    }
+    TEST_ASSERT(!tiku_htimer_is_scheduled(), "No htimer scheduled after one-shot");
 
-    TEST_PRINTF("Hardware timer basic test completed\n\n");
+    TEST_GROUP_END("Hardware Timer Basic");
 }
 
 #endif /* TEST_HTIMER_BASIC */

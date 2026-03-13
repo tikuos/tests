@@ -66,7 +66,7 @@ void test_timer_periodic(void)
 {
     unsigned int loops;
 
-    TEST_PRINTF("\n=== Test: Periodic Timer ===\n");
+    TEST_GROUP_BEGIN("Periodic Timer");
 
     periodic_count = 0;
 
@@ -95,25 +95,15 @@ void test_timer_periodic(void)
         }
     }
 
-    if (periodic_count == TEST_TIMER_PERIODIC_CNT) {
-        TEST_PRINTF("PASS: Periodic timer fired %u times\n",
-                     TEST_TIMER_PERIODIC_CNT);
-        tiku_common_led1_toggle();
-    } else {
-        TEST_PRINTF("FAIL: Periodic count = %u (expected %u)\n",
-                     periodic_count, TEST_TIMER_PERIODIC_CNT);
-    }
+    TEST_ASSERT(periodic_count == TEST_TIMER_PERIODIC_CNT,
+                "Periodic timer fired expected number of times");
 
     /* Verify timer is no longer active (stopped after last tick) */
-    if (tiku_timer_expired(&periodic_tmr)) {
-        TEST_PRINTF("PASS: Timer stopped after final tick\n");
-        tiku_common_led1_toggle();
-    } else {
-        TEST_PRINTF("FAIL: Timer still active after final tick\n");
-    }
+    TEST_ASSERT(tiku_timer_expired(&periodic_tmr),
+                "Timer stopped after final tick");
 
     tiku_process_exit(&test_periodic_timer_proc);
-    TEST_PRINTF("Periodic timer test completed\n\n");
+    TEST_GROUP_END("Periodic Timer");
 }
 
 #endif /* TEST_TIMER_PERIODIC */

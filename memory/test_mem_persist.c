@@ -32,7 +32,7 @@ void test_persist_init_zeroed(void)
     tiku_persist_store_t store;
     tiku_mem_err_t err;
 
-    TEST_PRINT("\n--- Test: Persist Init on Zeroed Store ---\n");
+    TEST_GROUP_BEGIN("Persist Init on Zeroed Store");
 
     memset(&store, 0, sizeof(store));
     err = tiku_persist_init(&store);
@@ -42,6 +42,7 @@ void test_persist_init_zeroed(void)
     /* NULL store rejected */
     err = tiku_persist_init(NULL);
     TEST_ASSERT(err == TIKU_MEM_ERR_INVALID, "persist_init NULL rejected");
+    TEST_GROUP_END("Persist Init on Zeroed Store");
 }
 
 /*---------------------------------------------------------------------------*/
@@ -53,7 +54,7 @@ void test_persist_register_and_count(void)
     tiku_persist_store_t store;
     uint8_t *fram_buf = test_nvm_pool;
 
-    TEST_PRINT("\n--- Test: Persist Register and Count ---\n");
+    TEST_GROUP_BEGIN("Persist Register and Count");
 
     memset(&store, 0, sizeof(store));
     tiku_persist_init(&store);
@@ -71,6 +72,7 @@ void test_persist_register_and_count(void)
                 == TIKU_MEM_ERR_INVALID, "NULL buffer rejected");
     TEST_ASSERT(tiku_persist_register(&store, "x", fram_buf, 0)
                 == TIKU_MEM_ERR_INVALID, "zero capacity rejected");
+    TEST_GROUP_END("Persist Register and Count");
 }
 
 /*---------------------------------------------------------------------------*/
@@ -86,7 +88,7 @@ void test_persist_write_read(void)
     tiku_mem_err_t err;
     const uint8_t data[] = {0xDE, 0xAD, 0xBE, 0xEF};
 
-    TEST_PRINT("\n--- Test: Persist Write Then Read ---\n");
+    TEST_GROUP_BEGIN("Persist Write Then Read");
 
     memset(&store, 0, sizeof(store));
     tiku_persist_init(&store);
@@ -102,6 +104,7 @@ void test_persist_write_read(void)
     TEST_ASSERT(out_len == sizeof(data), "read length matches write length");
     TEST_ASSERT(memcmp(read_buf, data, sizeof(data)) == 0,
                 "read data matches written data");
+    TEST_GROUP_END("Persist Write Then Read");
 }
 
 /*---------------------------------------------------------------------------*/
@@ -117,7 +120,7 @@ void test_persist_read_small_buffer(void)
     tiku_mem_err_t err;
     const uint8_t data[] = {1, 2, 3, 4, 5, 6, 7, 8};
 
-    TEST_PRINT("\n--- Test: Persist Read Small Buffer ---\n");
+    TEST_GROUP_BEGIN("Persist Read Small Buffer");
 
     memset(&store, 0, sizeof(store));
     tiku_persist_init(&store);
@@ -129,6 +132,7 @@ void test_persist_read_small_buffer(void)
                             &out_len);
     TEST_ASSERT(err == TIKU_MEM_ERR_NOMEM, "read with small buffer returns ERR_NOMEM");
     TEST_ASSERT(out_len == sizeof(data), "out_len reports required size");
+    TEST_GROUP_END("Persist Read Small Buffer");
 }
 
 /*---------------------------------------------------------------------------*/
@@ -142,7 +146,7 @@ void test_persist_write_exceeds_capacity(void)
     const uint8_t big_data[] = {1, 2, 3, 4, 5, 6, 7, 8};
     tiku_mem_err_t err;
 
-    TEST_PRINT("\n--- Test: Persist Write Exceeds Capacity ---\n");
+    TEST_GROUP_BEGIN("Persist Write Exceeds Capacity");
 
     memset(&store, 0, sizeof(store));
     tiku_persist_init(&store);
@@ -151,6 +155,7 @@ void test_persist_write_exceeds_capacity(void)
     err = tiku_persist_write(&store, "tiny", big_data, sizeof(big_data));
     TEST_ASSERT(err == TIKU_MEM_ERR_NOMEM,
                 "write exceeding capacity returns ERR_NOMEM");
+    TEST_GROUP_END("Persist Write Exceeds Capacity");
 }
 
 /*---------------------------------------------------------------------------*/
@@ -164,7 +169,7 @@ void test_persist_read_not_found(void)
     tiku_mem_arch_size_t out_len;
     tiku_mem_err_t err;
 
-    TEST_PRINT("\n--- Test: Persist Read Not Found ---\n");
+    TEST_GROUP_BEGIN("Persist Read Not Found");
 
     memset(&store, 0, sizeof(store));
     tiku_persist_init(&store);
@@ -172,6 +177,7 @@ void test_persist_read_not_found(void)
     err = tiku_persist_read(&store, "nope", buf, sizeof(buf), &out_len);
     TEST_ASSERT(err == TIKU_MEM_ERR_NOT_FOUND,
                 "read non-existent key returns ERR_NOT_FOUND");
+    TEST_GROUP_END("Persist Read Not Found");
 }
 
 /*---------------------------------------------------------------------------*/
@@ -187,7 +193,7 @@ void test_persist_delete(void)
     tiku_mem_err_t err;
     const uint8_t data[] = {0xAA, 0xBB};
 
-    TEST_PRINT("\n--- Test: Persist Delete ---\n");
+    TEST_GROUP_BEGIN("Persist Delete");
 
     memset(&store, 0, sizeof(store));
     tiku_persist_init(&store);
@@ -207,6 +213,7 @@ void test_persist_delete(void)
     err = tiku_persist_delete(&store, "gone");
     TEST_ASSERT(err == TIKU_MEM_ERR_NOT_FOUND,
                 "delete non-existent key returns ERR_NOT_FOUND");
+    TEST_GROUP_END("Persist Delete");
 }
 
 /*---------------------------------------------------------------------------*/
@@ -221,7 +228,7 @@ void test_persist_full(void)
     tiku_mem_err_t err;
     int i;
 
-    TEST_PRINT("\n--- Test: Persist Store Full ---\n");
+    TEST_GROUP_BEGIN("Persist Store Full");
 
     memset(&store, 0, sizeof(store));
     tiku_persist_init(&store);
@@ -241,6 +248,7 @@ void test_persist_full(void)
     err = tiku_persist_register(&store, "extra", extra_buf, 4);
     TEST_ASSERT(err == TIKU_MEM_ERR_FULL,
                 "register beyond max returns ERR_FULL");
+    TEST_GROUP_END("Persist Store Full");
 }
 
 /*---------------------------------------------------------------------------*/
@@ -275,7 +283,7 @@ void test_persist_reboot_survival(void)
     const uint8_t data[] = {0x42, 0x43, 0x44};
     uint16_t mpu_state;
 
-    TEST_PRINT("\n--- Test: Persist Reboot Survival ---\n");
+    TEST_GROUP_BEGIN("Persist Reboot Survival");
 
     if (test_reboot_phase == TEST_PERSIST_REBOOT_PHASE_WRITE) {
         /*-- Phase 0: write data and trigger a real reset ----------------*/
@@ -324,6 +332,7 @@ void test_persist_reboot_survival(void)
 
         tiku_mpu_lock_nvm(mpu_state);
     }
+    TEST_GROUP_END("Persist Reboot Survival");
 }
 
 /*---------------------------------------------------------------------------*/
@@ -357,7 +366,7 @@ void test_persist_powercycle_survival(void)
     const uint8_t data[] = {0xCA, 0xFE, 0xBA, 0xBE, 0x01};
     uint16_t mpu_state;
 
-    TEST_PRINT("\n--- Test: Persist Power-Cycle Survival ---\n");
+    TEST_GROUP_BEGIN("Persist Power-Cycle Survival");
 
     if (test_pwrcycle_phase == TEST_PERSIST_PWRCYCLE_PHASE_WRITE) {
         /*-- Phase 0: write data, then wait for user to remove power -----*/
@@ -427,20 +436,23 @@ void test_persist_powercycle_survival(void)
 
         TEST_PRINT("  FRAM data survived full power-cycle!\n");
     }
+    TEST_GROUP_END("Persist Power-Cycle Survival");
 }
 
 #else /* !PLATFORM_MSP430 */
 
 void test_persist_reboot_survival(void)
 {
-    TEST_PRINT("\n--- Test: Persist Reboot Survival ---\n");
+    TEST_GROUP_BEGIN("Persist Reboot Survival");
     TEST_PRINT("  SKIP: requires real hardware (PLATFORM_MSP430)\n");
+    TEST_GROUP_END("Persist Reboot Survival");
 }
 
 void test_persist_powercycle_survival(void)
 {
-    TEST_PRINT("\n--- Test: Persist Power-Cycle Survival ---\n");
+    TEST_GROUP_BEGIN("Persist Power-Cycle Survival");
     TEST_PRINT("  SKIP: requires real hardware (PLATFORM_MSP430)\n");
+    TEST_GROUP_END("Persist Power-Cycle Survival");
 }
 
 #endif /* PLATFORM_MSP430 */
@@ -457,7 +469,7 @@ void test_persist_wear_check(void)
     int result;
     tiku_persist_entry_t *entry;
 
-    TEST_PRINT("\n--- Test: Persist Wear Check ---\n");
+    TEST_GROUP_BEGIN("Persist Wear Check");
 
     memset(&store, 0, sizeof(store));
     tiku_persist_init(&store);
@@ -480,6 +492,7 @@ void test_persist_wear_check(void)
     result = tiku_persist_wear_check(&store, "nope", &wc);
     TEST_ASSERT(result == TIKU_MEM_ERR_NOT_FOUND,
                 "wear check non-existent key returns ERR_NOT_FOUND");
+    TEST_GROUP_END("Persist Wear Check");
 }
 
 /*---------------------------------------------------------------------------*/
@@ -496,7 +509,7 @@ void test_persist_register_twice(void)
     tiku_mem_err_t err;
     const uint8_t data[] = {0x11, 0x22, 0x33};
 
-    TEST_PRINT("\n--- Test: Persist Register Same Key Twice ---\n");
+    TEST_GROUP_BEGIN("Persist Register Same Key Twice");
 
     memset(&store, 0, sizeof(store));
     tiku_persist_init(&store);
@@ -516,4 +529,5 @@ void test_persist_register_twice(void)
     TEST_ASSERT(err == TIKU_MEM_OK, "read after re-register returns OK");
     TEST_ASSERT(out_len == sizeof(data),
                 "value_len preserved after re-register");
+    TEST_GROUP_END("Persist Register Same Key Twice");
 }

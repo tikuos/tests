@@ -40,7 +40,7 @@ void test_timer_stop(void)
 {
     unsigned int loops;
 
-    TEST_PRINTF("\n=== Test: Timer Stop ===\n");
+    TEST_GROUP_BEGIN("Timer Stop");
 
     stop_callback_fired = 0;
 
@@ -55,24 +55,14 @@ void test_timer_stop(void)
                 (unsigned int)TEST_TIMER_INTERVAL);
 
     /* Verify timer is active */
-    if (!tiku_timer_expired(&stop_tmr)) {
-        TEST_PRINTF("PASS: Timer is active after set\n");
-        tiku_common_led1_toggle();
-    } else {
-        TEST_PRINTF("FAIL: Timer reports expired right after set\n");
-    }
+    TEST_ASSERT(!tiku_timer_expired(&stop_tmr), "Timer is active after set");
 
     /* Stop it before it fires */
     tiku_timer_stop(&stop_tmr);
     TEST_PRINTF("Stop timer: stopped\n");
 
     /* Verify timer reports expired (removed from active list) */
-    if (tiku_timer_expired(&stop_tmr)) {
-        TEST_PRINTF("PASS: Timer reports expired after stop\n");
-        tiku_common_led1_toggle();
-    } else {
-        TEST_PRINTF("FAIL: Timer still active after stop\n");
-    }
+    TEST_ASSERT(tiku_timer_expired(&stop_tmr), "Timer reports expired after stop");
 
     /* Run the scheduler past the original expiration to confirm */
     for (loops = 0; loops < TEST_TIMER_DRAIN_MAX; loops++) {
@@ -83,14 +73,9 @@ void test_timer_stop(void)
         }
     }
 
-    if (stop_callback_fired == 0) {
-        TEST_PRINTF("PASS: Callback did not fire after stop\n");
-        tiku_common_led1_toggle();
-    } else {
-        TEST_PRINTF("FAIL: Callback fired despite stop\n");
-    }
+    TEST_ASSERT(stop_callback_fired == 0, "Callback did not fire after stop");
 
-    TEST_PRINTF("Timer stop test completed\n\n");
+    TEST_GROUP_END("Timer Stop");
 }
 
 #endif /* TEST_TIMER_STOP */

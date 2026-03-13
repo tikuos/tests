@@ -30,6 +30,7 @@
 
 #include "tiku.h"
 #include "kernel/cpu/tiku_common.h"
+#include "tests/tiku_test_harness.h"
 
 #if TEST_WATCHDOG
 #include "tests/watchdog/test_watchdog.h"
@@ -51,6 +52,21 @@
 #include "tests/memory/test_tiku_mem.h"
 #endif
 
+#if defined(HAS_TIKUKITS)
+#if TEST_KITS_MATHS
+#include "tikukits/tests/maths/test_kits_maths.h"
+#endif
+#if TEST_KITS_SENSOR
+#include "tikukits/tests/sensors/test_kits_sensor.h"
+#endif
+#if TEST_KITS_SIGFEATURES
+#include "tikukits/tests/sigfeatures/test_kits_sigfeatures.h"
+#endif
+#if TEST_KITS_TEXTCOMPRESSION
+#include "tikukits/tests/textcompression/test_kits_textcompression.h"
+#endif
+#endif /* HAS_TIKUKITS */
+
 /*---------------------------------------------------------------------------*/
 /* PRIVATE CONSTANTS                                                        */
 /*---------------------------------------------------------------------------*/
@@ -70,6 +86,9 @@ static void test_run_mpu(void);
 static void test_run_persist(void);
 static void test_run_pool(void);
 static void test_run_region(void);
+#if defined(HAS_TIKUKITS)
+static void test_run_kits(void);
+#endif
 
 /*---------------------------------------------------------------------------*/
 /* PUBLIC FUNCTIONS                                                         */
@@ -77,7 +96,7 @@ static void test_run_region(void);
 
 void test_run_all(void)
 {
-    MAIN_PRINTF("=== TikuOS Test Suite ===\n");
+    TEST_SUITE_BEGIN("TikuOS");
 
     /* Pre-interrupt tests */
     test_run_cpuclock();
@@ -89,14 +108,18 @@ void test_run_all(void)
     test_run_pool();
     test_run_region();
 
+    /* TikuKits library tests (no ISR dependency) */
+#if defined(HAS_TIKUKITS)
+    test_run_kits();
+#endif
+
     /* Enable global interrupts (needed for timer ISRs) */
-    MAIN_PRINTF("Enabling global interrupts\n");
     __enable_interrupt();
 
     /* Post-interrupt tests */
     test_run_timer();
 
-    MAIN_PRINTF("=== Test suite completed ===\n");
+    TEST_SUITE_END("TikuOS");
 }
 
 /*---------------------------------------------------------------------------*/
@@ -582,3 +605,94 @@ static void test_run_region(void)
     MAIN_PRINTF("Region registry tests completed\n");
 #endif
 }
+
+/*---------------------------------------------------------------------------*/
+/* TIKUKITS TESTS                                                            */
+/*---------------------------------------------------------------------------*/
+
+#if defined(HAS_TIKUKITS)
+static void test_run_kits(void)
+{
+#if TEST_KITS
+    MAIN_PRINTF("=== TikuKits Test Suite ===\n");
+
+#if TEST_KITS_MATRIX
+    MAIN_PRINTF("Running TikuKits matrix tests\n");
+    test_kits_matrix_init();
+    test_kits_matrix_identity();
+    test_kits_matrix_set_get();
+    test_kits_matrix_copy_equal();
+    test_kits_matrix_add_sub();
+    test_kits_matrix_mul();
+    test_kits_matrix_scale();
+    test_kits_matrix_transpose();
+    test_kits_matrix_det();
+    test_kits_matrix_trace();
+    test_kits_matrix_dim_mismatch();
+    test_kits_matrix_null_inputs();
+    MAIN_PRINTF("Matrix tests completed\n");
+    tiku_common_delay_ms(TEST_DELAY_MS);
+#endif
+
+#if TEST_KITS_STATISTICS
+    MAIN_PRINTF("Running TikuKits statistics tests\n");
+    test_kits_stats_windowed();
+    test_kits_stats_windowed_eviction();
+    test_kits_stats_welford();
+    test_kits_stats_minmax();
+    test_kits_stats_ewma();
+    test_kits_stats_energy();
+    test_kits_stats_isqrt();
+    test_kits_stats_null_inputs();
+    MAIN_PRINTF("Statistics tests completed\n");
+    tiku_common_delay_ms(TEST_DELAY_MS);
+#endif
+
+#if TEST_KITS_DISTANCE
+    MAIN_PRINTF("Running TikuKits distance tests\n");
+    test_kits_distance_manhattan();
+    test_kits_distance_euclidean_sq();
+    test_kits_distance_dot();
+    test_kits_distance_cosine_sq();
+    test_kits_distance_hamming();
+    test_kits_distance_null_inputs();
+    MAIN_PRINTF("Distance tests completed\n");
+    tiku_common_delay_ms(TEST_DELAY_MS);
+#endif
+
+#if TEST_KITS_SENSOR
+    MAIN_PRINTF("Running TikuKits sensor tests\n");
+    test_kits_sensor_frac_conv();
+    test_kits_sensor_name();
+    MAIN_PRINTF("Sensor tests completed\n");
+    tiku_common_delay_ms(TEST_DELAY_MS);
+#endif
+
+#if TEST_KITS_SIGFEATURES
+    MAIN_PRINTF("Running TikuKits signal feature tests\n");
+    test_kits_sigfeatures_peak();
+    test_kits_sigfeatures_zcr();
+    test_kits_sigfeatures_histogram();
+    test_kits_sigfeatures_delta();
+    test_kits_sigfeatures_goertzel();
+    test_kits_sigfeatures_zscore();
+    test_kits_sigfeatures_scale();
+    test_kits_sigfeatures_null();
+    MAIN_PRINTF("Signal feature tests completed\n");
+    tiku_common_delay_ms(TEST_DELAY_MS);
+#endif
+
+#if TEST_KITS_TEXTCOMPRESSION
+    MAIN_PRINTF("Running TikuKits text compression tests\n");
+    test_kits_textcomp_rle();
+    test_kits_textcomp_bpe();
+    test_kits_textcomp_heatshrink();
+    test_kits_textcomp_null();
+    MAIN_PRINTF("Text compression tests completed\n");
+    tiku_common_delay_ms(TEST_DELAY_MS);
+#endif
+
+    MAIN_PRINTF("=== TikuKits tests completed ===\n");
+#endif /* TEST_KITS */
+}
+#endif /* HAS_TIKUKITS */

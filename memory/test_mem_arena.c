@@ -34,7 +34,7 @@ void test_mem_create_and_stats(void)
     tiku_mem_stats_t stats;
     tiku_mem_err_t err;
 
-    TEST_PRINT("\n--- Test: Creation and Initial Stats ---\n");
+    TEST_GROUP_BEGIN("Creation and Initial Stats");
     test_region_reinit();
 
     err = tiku_arena_create(&arena, buf, 64, 1);
@@ -48,6 +48,7 @@ void test_mem_create_and_stats(void)
     TEST_ASSERT(stats.used_bytes == 0, "used_bytes is 0 after create");
     TEST_ASSERT(stats.peak_bytes == 0, "peak_bytes is 0 after create");
     TEST_ASSERT(stats.alloc_count == 0, "alloc_count is 0 after create");
+    TEST_GROUP_END("Creation and Initial Stats");
 }
 
 /*---------------------------------------------------------------------------*/
@@ -61,7 +62,7 @@ void test_mem_basic_alloc(void)
     tiku_mem_stats_t stats;
     void *p1, *p2;
 
-    TEST_PRINT("\n--- Test: Basic Allocation ---\n");
+    TEST_GROUP_BEGIN("Basic Allocation");
     test_region_reinit();
 
     tiku_arena_create(&arena, buf, 64, 2);
@@ -83,6 +84,7 @@ void test_mem_basic_alloc(void)
     tiku_arena_stats(&arena, &stats);
     TEST_ASSERT(stats.used_bytes == 12, "used_bytes tracks total allocated");
     TEST_ASSERT(stats.alloc_count == 2, "alloc_count tracks allocations");
+    TEST_GROUP_END("Basic Allocation");
 }
 
 /*---------------------------------------------------------------------------*/
@@ -102,7 +104,7 @@ void test_mem_alignment(void)
     const tiku_mem_arch_size_t a2 = TEST_ALIGN_UP(1);  /* 1 -> A */
     const tiku_mem_arch_size_t a3 = TEST_ALIGN_UP(5);  /* 5 -> next multiple of A */
 
-    TEST_PRINT("\n--- Test: %u-Byte Alignment ---\n", A);
+    TEST_GROUP_BEGIN("Alignment");
     test_region_reinit();
 
     tiku_arena_create(&arena, buf, 64, 3);
@@ -127,6 +129,7 @@ void test_mem_alignment(void)
     TEST_ASSERT(((uintptr_t)p1 % A) == 0, "pointer 1 is aligned");
     TEST_ASSERT(((uintptr_t)p2 % A) == 0, "pointer 2 is aligned");
     TEST_ASSERT(((uintptr_t)p3 % A) == 0, "pointer 3 is aligned");
+    TEST_GROUP_END("Alignment");
 }
 
 /*---------------------------------------------------------------------------*/
@@ -145,7 +148,7 @@ void test_mem_arena_full(void)
     tiku_arena_t arena;
     void *p1, *p2, *p3;
 
-    TEST_PRINT("\n--- Test: Arena Full ---\n");
+    TEST_GROUP_BEGIN("Arena Full");
     test_region_reinit();
 
     tiku_arena_create(&arena, buf, buf_size, 4);
@@ -165,6 +168,7 @@ void test_mem_arena_full(void)
     /* Arena is now completely full */
     p2 = tiku_arena_alloc(&arena, 1);
     TEST_ASSERT(p2 == NULL, "1-byte alloc fails when arena is full");
+    TEST_GROUP_END("Arena Full");
 }
 
 /*---------------------------------------------------------------------------*/
@@ -178,7 +182,7 @@ void test_mem_reset(void)
     tiku_mem_stats_t stats;
     tiku_mem_err_t err;
 
-    TEST_PRINT("\n--- Test: Reset ---\n");
+    TEST_GROUP_BEGIN("Reset");
     test_region_reinit();
 
     tiku_arena_create(&arena, buf, 64, 5);
@@ -203,6 +207,7 @@ void test_mem_reset(void)
     /* Can allocate again from the beginning */
     void *p = tiku_arena_alloc(&arena, 4);
     TEST_ASSERT(p == &buf[0], "allocation after reset starts at base");
+    TEST_GROUP_END("Reset");
 }
 
 /*---------------------------------------------------------------------------*/
@@ -215,7 +220,7 @@ void test_mem_peak_tracking(void)
     tiku_arena_t arena;
     tiku_mem_stats_t stats;
 
-    TEST_PRINT("\n--- Test: Peak Tracking Across Resets ---\n");
+    TEST_GROUP_BEGIN("Peak Tracking Across Resets");
     test_region_reinit();
 
     tiku_arena_create(&arena, buf, 64, 6);
@@ -240,6 +245,7 @@ void test_mem_peak_tracking(void)
     tiku_arena_stats(&arena, &stats);
     TEST_ASSERT(stats.peak_bytes == 32, "peak remains 32 after smaller third cycle");
     TEST_ASSERT(stats.used_bytes == 8, "used_bytes is 8 in third cycle");
+    TEST_GROUP_END("Peak Tracking Across Resets");
 }
 
 /*---------------------------------------------------------------------------*/
@@ -254,7 +260,7 @@ void test_mem_invalid_inputs(void)
     tiku_mem_err_t err;
     void *p;
 
-    TEST_PRINT("\n--- Test: Invalid Inputs ---\n");
+    TEST_GROUP_BEGIN("Invalid Inputs");
     test_region_reinit();
 
     /* NULL arena pointer */
@@ -285,6 +291,7 @@ void test_mem_invalid_inputs(void)
     /* Stats with NULL output */
     err = tiku_arena_stats(&arena, NULL);
     TEST_ASSERT(err == TIKU_MEM_ERR_INVALID, "stats with NULL output rejected");
+    TEST_GROUP_END("Invalid Inputs");
 }
 
 /*---------------------------------------------------------------------------*/
@@ -301,7 +308,7 @@ void test_mem_secure_reset(void)
     unsigned int i;
     void *p;
 
-    TEST_PRINT("\n--- Test: Secure Reset ---\n");
+    TEST_GROUP_BEGIN("Secure Reset");
     test_region_reinit();
 
     tiku_arena_create(&arena, buf, 32, 8);
@@ -342,6 +349,7 @@ void test_mem_secure_reset(void)
     /* NULL arena rejected */
     err = tiku_arena_secure_reset(NULL);
     TEST_ASSERT(err == TIKU_MEM_ERR_INVALID, "secure_reset NULL arena rejected");
+    TEST_GROUP_END("Secure Reset");
 }
 
 /*---------------------------------------------------------------------------*/
@@ -356,7 +364,7 @@ void test_mem_two_arenas(void)
     tiku_mem_stats_t stats_a, stats_b;
     void *pa, *pb;
 
-    TEST_PRINT("\n--- Test: Two Independent Arenas ---\n");
+    TEST_GROUP_BEGIN("Two Independent Arenas");
     test_region_reinit();
 
     tiku_arena_create(&arena_a, buf_a, 32, 10);
@@ -393,4 +401,5 @@ void test_mem_two_arenas(void)
 
     tiku_arena_stats(&arena_b, &stats_b);
     TEST_ASSERT(stats_b.used_bytes == 16, "arena B still unaffected");
+    TEST_GROUP_END("Two Independent Arenas");
 }

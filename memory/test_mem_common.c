@@ -222,7 +222,7 @@ int main(void)
     /* Initialize memory subsystem (region registry + MPU stubs) */
     tiku_mem_init();
 
-    printf("=== TikuOS Memory Module Tests ===\n");
+    TEST_SUITE_BEGIN("TikuOS Memory");
 
     /* Arena allocator tests */
     test_mem_create_and_stats();
@@ -291,8 +291,7 @@ int main(void)
     test_region_get_type_found();
     test_region_get_type_not_found();
 
-    printf("\n=== Results: %d/%d passed, %d failed ===\n",
-           tests_passed, tests_run, tests_failed);
+    TEST_SUITE_END("TikuOS Memory");
 
     return tests_failed > 0 ? 1 : 0;
 }

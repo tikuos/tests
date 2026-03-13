@@ -54,7 +54,7 @@ TIKU_PROCESS_THREAD(test_yield_proc, ev, data)
 
 void test_process_yield(void)
 {
-    TEST_PRINTF("\n=== Test: Cooperative Yield ===\n");
+    TEST_GROUP_BEGIN("Cooperative Yield");
 
     yield_phase = 0;
 
@@ -66,12 +66,7 @@ void test_process_yield(void)
         /* drain */
     }
 
-    if (yield_phase == 1) {
-        TEST_PRINTF("PASS: Phase 1 reached after INIT\n");
-        tiku_common_led1_toggle();
-    } else {
-        TEST_PRINTF("FAIL: Expected phase 1, got %d\n", yield_phase);
-    }
+    TEST_ASSERT(yield_phase == 1, "Phase 1 reached after INIT");
 
     /* Post event to resume -> phase 2, yields again */
     tiku_process_post(&test_yield_proc, TIKU_EVENT_CONTINUE, NULL);
@@ -79,12 +74,7 @@ void test_process_yield(void)
         /* drain */
     }
 
-    if (yield_phase == 2) {
-        TEST_PRINTF("PASS: Phase 2 reached after first resume\n");
-        tiku_common_led1_toggle();
-    } else {
-        TEST_PRINTF("FAIL: Expected phase 2, got %d\n", yield_phase);
-    }
+    TEST_ASSERT(yield_phase == 2, "Phase 2 reached after first resume");
 
     /* Post event to resume -> phase 3, process ends */
     tiku_process_post(&test_yield_proc, TIKU_EVENT_CONTINUE, NULL);
@@ -92,20 +82,11 @@ void test_process_yield(void)
         /* drain */
     }
 
-    if (yield_phase == 3) {
-        TEST_PRINTF("PASS: Phase 3 reached after second resume\n");
-        tiku_common_led1_toggle();
-    } else {
-        TEST_PRINTF("FAIL: Expected phase 3, got %d\n", yield_phase);
-    }
+    TEST_ASSERT(yield_phase == 3, "Phase 3 reached after second resume");
 
-    if (!test_yield_proc.is_running) {
-        TEST_PRINTF("PASS: Process ended after final phase\n");
-    } else {
-        TEST_PRINTF("FAIL: Process still running\n");
-    }
+    TEST_ASSERT(!test_yield_proc.is_running, "Process ended after final phase");
 
-    TEST_PRINTF("Cooperative yield test completed\n\n");
+    TEST_GROUP_END("Cooperative Yield");
 }
 
 #endif /* TEST_PROCESS_YIELD */

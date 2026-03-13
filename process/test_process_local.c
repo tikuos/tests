@@ -94,7 +94,7 @@ void test_process_local_storage(void)
     struct local_test_state *ls;
     struct typed_test_state *ts;
 
-    TEST_PRINTF("\n=== Test: Process Local Storage ===\n");
+    TEST_GROUP_BEGIN("Process Local Storage");
 
     tiku_process_init();
 
@@ -111,14 +111,7 @@ void test_process_local_storage(void)
 
     ls = (struct local_test_state *)test_local_proc.local;
 
-    if (ls->counter == 10 && ls->phase == 1) {
-        TEST_PRINTF("PASS: Local state correct after phase 1\n");
-        tiku_common_led1_toggle();
-    } else {
-        TEST_PRINTF("FAIL: Expected counter=10 phase=1, "
-                     "got counter=%d phase=%d\n",
-                     ls->counter, ls->phase);
-    }
+    TEST_ASSERT(ls->counter == 10 && ls->phase == 1, "Local state correct after phase 1");
 
     /* Resume -> phase 2 */
     tiku_process_post(&test_local_proc, TIKU_EVENT_CONTINUE, NULL);
@@ -126,14 +119,7 @@ void test_process_local_storage(void)
         /* drain */
     }
 
-    if (ls->counter == 15 && ls->phase == 2) {
-        TEST_PRINTF("PASS: Local state survived yield (phase 2)\n");
-        tiku_common_led1_toggle();
-    } else {
-        TEST_PRINTF("FAIL: Expected counter=15 phase=2, "
-                     "got counter=%d phase=%d\n",
-                     ls->counter, ls->phase);
-    }
+    TEST_ASSERT(ls->counter == 15 && ls->phase == 2, "Local state survived yield (phase 2)");
 
     /* Resume -> phase 3, process ends */
     tiku_process_post(&test_local_proc, TIKU_EVENT_CONTINUE, NULL);
@@ -141,20 +127,9 @@ void test_process_local_storage(void)
         /* drain */
     }
 
-    if (ls->counter == 16 && ls->phase == 3) {
-        TEST_PRINTF("PASS: Local state correct at exit (phase 3)\n");
-        tiku_common_led1_toggle();
-    } else {
-        TEST_PRINTF("FAIL: Expected counter=16 phase=3, "
-                     "got counter=%d phase=%d\n",
-                     ls->counter, ls->phase);
-    }
+    TEST_ASSERT(ls->counter == 16 && ls->phase == 3, "Local state correct at exit (phase 3)");
 
-    if (!test_local_proc.is_running) {
-        TEST_PRINTF("PASS: Process exited normally\n");
-    } else {
-        TEST_PRINTF("FAIL: Process still running\n");
-    }
+    TEST_ASSERT(!test_local_proc.is_running, "Process exited normally");
 
     /*---------------------------------------------------------------*/
     /* Part B: TIKU_PROCESS_TYPED accessor                           */
@@ -169,12 +144,7 @@ void test_process_local_storage(void)
 
     ts = test_typed_proc_local();
 
-    if (ts->value == 42) {
-        TEST_PRINTF("PASS: Typed accessor returns correct value\n");
-        tiku_common_led1_toggle();
-    } else {
-        TEST_PRINTF("FAIL: Expected value=42, got %d\n", ts->value);
-    }
+    TEST_ASSERT(ts->value == 42, "Typed accessor returns correct value");
 
     /* Resume -> value=50, process ends */
     tiku_process_post(&test_typed_proc, TIKU_EVENT_CONTINUE, NULL);
@@ -182,31 +152,17 @@ void test_process_local_storage(void)
         /* drain */
     }
 
-    if (ts->value == 50) {
-        TEST_PRINTF("PASS: Typed state survived yield\n");
-        tiku_common_led1_toggle();
-    } else {
-        TEST_PRINTF("FAIL: Expected value=50, got %d\n", ts->value);
-    }
+    TEST_ASSERT(ts->value == 50, "Typed state survived yield");
 
-    if (!test_typed_proc.is_running) {
-        TEST_PRINTF("PASS: Typed process exited normally\n");
-    } else {
-        TEST_PRINTF("FAIL: Typed process still running\n");
-    }
+    TEST_ASSERT(!test_typed_proc.is_running, "Typed process exited normally");
 
     /*---------------------------------------------------------------*/
     /* Part C: Plain TIKU_PROCESS has local == NULL                   */
     /*---------------------------------------------------------------*/
 
-    if (test_local_proc.local != NULL) {
-        TEST_PRINTF("PASS: WITH_LOCAL process has non-NULL local\n");
-        tiku_common_led1_toggle();
-    } else {
-        TEST_PRINTF("FAIL: WITH_LOCAL process has NULL local\n");
-    }
+    TEST_ASSERT(test_local_proc.local != NULL, "WITH_LOCAL process has non-NULL local");
 
-    TEST_PRINTF("Process local storage test completed\n\n");
+    TEST_GROUP_END("Process Local Storage");
 }
 
 #endif /* TEST_PROCESS_LOCAL */

@@ -50,7 +50,7 @@ TIKU_PROCESS_THREAD(test_lifecycle_proc, ev, data)
 
 void test_process_lifecycle(void)
 {
-    TEST_PRINTF("\n=== Test: Basic Process Lifecycle ===\n");
+    TEST_GROUP_BEGIN("Basic Process Lifecycle");
 
     lifecycle_phase = 0;
 
@@ -68,19 +68,10 @@ void test_process_lifecycle(void)
     }
 
     /* Verify phase 1 reached */
-    if (lifecycle_phase == 1) {
-        TEST_PRINTF("PASS: Process received INIT event\n");
-        tiku_common_led1_toggle();
-    } else {
-        TEST_PRINTF("FAIL: Expected phase 1, got %d\n", lifecycle_phase);
-    }
+    TEST_ASSERT(lifecycle_phase == 1, "Process received INIT event");
 
     /* Verify process is still running (yielded, not ended) */
-    if (test_lifecycle_proc.is_running) {
-        TEST_PRINTF("PASS: Process is running after yield\n");
-    } else {
-        TEST_PRINTF("FAIL: Process is not running\n");
-    }
+    TEST_ASSERT(test_lifecycle_proc.is_running, "Process is running after yield");
 
     /* Post a continue event to advance past the yield */
     tiku_process_post(&test_lifecycle_proc, TIKU_EVENT_CONTINUE, NULL);
@@ -89,21 +80,11 @@ void test_process_lifecycle(void)
     }
 
     /* Verify phase 2 reached and process auto-exited at PROCESS_END */
-    if (lifecycle_phase == 2) {
-        TEST_PRINTF("PASS: Process reached phase 2\n");
-        tiku_common_led1_toggle();
-    } else {
-        TEST_PRINTF("FAIL: Expected phase 2, got %d\n", lifecycle_phase);
-    }
+    TEST_ASSERT(lifecycle_phase == 2, "Process reached phase 2");
 
-    if (!test_lifecycle_proc.is_running) {
-        TEST_PRINTF("PASS: Process auto-exited at PROCESS_END\n");
-        tiku_common_led1_toggle();
-    } else {
-        TEST_PRINTF("FAIL: Process still running after PROCESS_END\n");
-    }
+    TEST_ASSERT(!test_lifecycle_proc.is_running, "Process auto-exited at PROCESS_END");
 
-    TEST_PRINTF("Process lifecycle test completed\n\n");
+    TEST_GROUP_END("Basic Process Lifecycle");
 }
 
 #endif /* TEST_PROCESS_LIFECYCLE */

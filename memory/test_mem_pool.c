@@ -34,7 +34,7 @@ void test_pool_create_and_stats(void)
     tiku_mem_stats_t stats;
     tiku_mem_err_t err;
 
-    TEST_PRINT("\n--- Test: Pool Creation and Initial Stats ---\n");
+    TEST_GROUP_BEGIN("Pool Creation and Initial Stats");
 
     err = tiku_pool_create(&pool, buf, 8, 4, 1);
     TEST_ASSERT(err == TIKU_MEM_OK, "pool_create returns OK");
@@ -51,6 +51,7 @@ void test_pool_create_and_stats(void)
     TEST_ASSERT(stats.used_bytes == 0, "used_bytes is 0 after create");
     TEST_ASSERT(stats.peak_bytes == 0, "peak_bytes is 0 after create");
     TEST_ASSERT(stats.alloc_count == 0, "alloc_count is 0 after create");
+    TEST_GROUP_END("Pool Creation and Initial Stats");
 }
 
 /*---------------------------------------------------------------------------*/
@@ -65,7 +66,7 @@ void test_pool_basic_alloc_free(void)
     void *p1, *p2;
     tiku_mem_err_t err;
 
-    TEST_PRINT("\n--- Test: Pool Basic Alloc and Free ---\n");
+    TEST_GROUP_BEGIN("Pool Basic Alloc and Free");
 
     tiku_pool_create(&pool, buf, 8, 4, 2);
 
@@ -93,6 +94,7 @@ void test_pool_basic_alloc_free(void)
 
     tiku_pool_stats(&pool, &stats);
     TEST_ASSERT(stats.alloc_count == 1, "alloc_count is 1 after free");
+    TEST_GROUP_END("Pool Basic Alloc and Free");
 }
 
 /*---------------------------------------------------------------------------*/
@@ -114,7 +116,7 @@ void test_pool_exhaustion(void)
     void *p;
     int i;
 
-    TEST_PRINT("\n--- Test: Pool Exhaustion ---\n");
+    TEST_GROUP_BEGIN("Pool Exhaustion");
 
     tiku_pool_create(&pool, buf, (tiku_mem_arch_size_t)sizeof(void *), 4, 3);
 
@@ -132,6 +134,7 @@ void test_pool_exhaustion(void)
     tiku_pool_free(&pool, blocks[0]);
     p = tiku_pool_alloc(&pool);
     TEST_ASSERT(p != NULL, "alloc succeeds after free returns a block");
+    TEST_GROUP_END("Pool Exhaustion");
 }
 
 /*---------------------------------------------------------------------------*/
@@ -145,7 +148,7 @@ void test_pool_free_out_of_range(void)
     tiku_pool_t pool;
     tiku_mem_err_t err;
 
-    TEST_PRINT("\n--- Test: Pool Free Out Of Range ---\n");
+    TEST_GROUP_BEGIN("Pool Free Out Of Range");
 
     tiku_pool_create(&pool, buf, 8, 4, 4);
 
@@ -163,6 +166,7 @@ void test_pool_free_out_of_range(void)
     err = tiku_pool_free(&pool, buf - 1);
     TEST_ASSERT(err == TIKU_MEM_ERR_INVALID,
                 "free of pointer before buffer start rejected");
+    TEST_GROUP_END("Pool Free Out Of Range");
 }
 
 /*---------------------------------------------------------------------------*/
@@ -175,7 +179,7 @@ void test_pool_free_misaligned(void)
     tiku_pool_t pool;
     tiku_mem_err_t err;
 
-    TEST_PRINT("\n--- Test: Pool Free Misaligned ---\n");
+    TEST_GROUP_BEGIN("Pool Free Misaligned");
 
     tiku_pool_create(&pool, buf, 8, 4, 5);
 
@@ -187,6 +191,7 @@ void test_pool_free_misaligned(void)
     err = tiku_pool_free(&pool, buf + pool.block_size + 1);
     TEST_ASSERT(err == TIKU_MEM_ERR_INVALID,
                 "free of misaligned pointer (block+1) rejected");
+    TEST_GROUP_END("Pool Free Misaligned");
 }
 
 /*---------------------------------------------------------------------------*/
@@ -199,7 +204,7 @@ void test_pool_alloc_free_realloc(void)
     tiku_pool_t pool;
     void *p1, *p2, *p3;
 
-    TEST_PRINT("\n--- Test: Pool Alloc-Free-Realloc (LIFO) ---\n");
+    TEST_GROUP_BEGIN("Pool Alloc-Free-Realloc (LIFO)");
 
     tiku_pool_create(&pool, buf, 8, 4, 6);
 
@@ -216,6 +221,7 @@ void test_pool_alloc_free_realloc(void)
 
     p3 = tiku_pool_alloc(&pool);
     TEST_ASSERT(p3 == p2, "LIFO: second re-alloc returns previously freed block");
+    TEST_GROUP_END("Pool Alloc-Free-Realloc (LIFO)");
 }
 
 /*---------------------------------------------------------------------------*/
@@ -229,7 +235,7 @@ void test_pool_peak_tracking(void)
     tiku_mem_stats_t stats;
     void *p1, *p2, *p3;
 
-    TEST_PRINT("\n--- Test: Pool Peak Tracking ---\n");
+    TEST_GROUP_BEGIN("Pool Peak Tracking");
 
     tiku_pool_create(&pool, buf, 8, 4, 7);
 
@@ -258,6 +264,7 @@ void test_pool_peak_tracking(void)
     tiku_pool_stats(&pool, &stats);
     TEST_ASSERT(stats.peak_bytes == pool.block_size * 3,
                 "peak remains 3 after smaller reuse");
+    TEST_GROUP_END("Pool Peak Tracking");
 }
 
 /*---------------------------------------------------------------------------*/
@@ -272,7 +279,7 @@ void test_pool_reset(void)
     tiku_mem_err_t err;
     void *p;
 
-    TEST_PRINT("\n--- Test: Pool Reset ---\n");
+    TEST_GROUP_BEGIN("Pool Reset");
 
     tiku_pool_create(&pool, buf, 8, 4, 8);
 
@@ -299,6 +306,7 @@ void test_pool_reset(void)
     p = tiku_pool_alloc(&pool);
     TEST_ASSERT(p != NULL, "allocation succeeds after reset");
     TEST_ASSERT(p == &buf[0], "first alloc after reset starts at base");
+    TEST_GROUP_END("Pool Reset");
 }
 
 /*---------------------------------------------------------------------------*/
@@ -313,7 +321,7 @@ void test_pool_invalid_inputs(void)
     tiku_mem_err_t err;
     void *p;
 
-    TEST_PRINT("\n--- Test: Pool Invalid Inputs ---\n");
+    TEST_GROUP_BEGIN("Pool Invalid Inputs");
 
     /* NULL pool */
     err = tiku_pool_create(NULL, buf, 8, 4, 0);
@@ -351,6 +359,7 @@ void test_pool_invalid_inputs(void)
     /* Stats with NULL output */
     err = tiku_pool_stats(&pool, NULL);
     TEST_ASSERT(err == TIKU_MEM_ERR_INVALID, "stats with NULL output rejected");
+    TEST_GROUP_END("Pool Invalid Inputs");
 }
 
 /*---------------------------------------------------------------------------*/
@@ -365,7 +374,7 @@ void test_pool_two_pools(void)
     tiku_mem_stats_t stats_a, stats_b;
     void *pa, *pb;
 
-    TEST_PRINT("\n--- Test: Two Independent Pools ---\n");
+    TEST_GROUP_BEGIN("Two Independent Pools");
 
     tiku_pool_create(&pool_a, buf_a, 8, 4, 10);
     tiku_pool_create(&pool_b, buf_b, 16, 4, 20);
@@ -395,6 +404,7 @@ void test_pool_two_pools(void)
     tiku_pool_free(&pool_b, pb);
     tiku_pool_stats(&pool_b, &stats_b);
     TEST_ASSERT(stats_b.alloc_count == 0, "pool B free works independently");
+    TEST_GROUP_END("Two Independent Pools");
 }
 
 /*---------------------------------------------------------------------------*/
@@ -408,7 +418,7 @@ void test_pool_block_size_alignment(void)
     const tiku_mem_arch_size_t A = TIKU_MEM_ARCH_ALIGNMENT;
     tiku_mem_arch_size_t min_size;
 
-    TEST_PRINT("\n--- Test: Pool Block Size Alignment ---\n");
+    TEST_GROUP_BEGIN("Pool Block Size Alignment");
 
     /* Request block_size = 1 — should be clamped to minimum */
     tiku_pool_create(&pool, buf, 1, 4, 9);
@@ -430,6 +440,7 @@ void test_pool_block_size_alignment(void)
                 "odd block_size rounded up to alignment");
     TEST_ASSERT(pool.block_size % A == 0,
                 "rounded block_size is properly aligned");
+    TEST_GROUP_END("Pool Block Size Alignment");
 }
 
 /*---------------------------------------------------------------------------*/
@@ -442,7 +453,7 @@ void test_pool_stats_mapping(void)
     tiku_pool_t pool;
     tiku_mem_stats_t stats;
 
-    TEST_PRINT("\n--- Test: Pool Stats Mapping ---\n");
+    TEST_GROUP_BEGIN("Pool Stats Mapping");
 
     tiku_pool_create(&pool, buf, 8, 4, 11);
 
@@ -460,6 +471,7 @@ void test_pool_stats_mapping(void)
                 "alloc_count = used_count");
     TEST_ASSERT(stats.peak_bytes == pool.block_size * 2,
                 "peak_bytes = block_size * peak_count");
+    TEST_GROUP_END("Pool Stats Mapping");
 }
 
 /*---------------------------------------------------------------------------*/
@@ -475,7 +487,7 @@ void test_pool_debug_poisoning(void)
     tiku_mem_arch_size_t i;
     int all_poisoned;
 
-    TEST_PRINT("\n--- Test: Pool Debug Poisoning ---\n");
+    TEST_GROUP_BEGIN("Pool Debug Poisoning");
 
 #if TIKU_POOL_DEBUG
     /*
@@ -514,6 +526,7 @@ void test_pool_debug_poisoning(void)
     TEST_PRINT("  SKIP: TIKU_POOL_DEBUG is disabled\n");
     TEST_ASSERT(1, "debug poisoning test skipped (TIKU_POOL_DEBUG=0)");
 #endif
+    TEST_GROUP_END("Pool Debug Poisoning");
 }
 
 /*---------------------------------------------------------------------------*/
@@ -527,7 +540,7 @@ void test_pool_alloc_within_buffer(void)
     void *p;
     int i;
 
-    TEST_PRINT("\n--- Test: Pool Alloc Within Buffer ---\n");
+    TEST_GROUP_BEGIN("Pool Alloc Within Buffer");
 
     tiku_pool_create(&pool, buf, 8, 4, 13);
 
@@ -538,4 +551,5 @@ void test_pool_alloc_within_buffer(void)
                     buf + pool.block_size * pool.block_count,
                     "block end is within buffer");
     }
+    TEST_GROUP_END("Pool Alloc Within Buffer");
 }

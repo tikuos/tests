@@ -37,7 +37,7 @@ void test_watchdog_pause_resume(void)
 {
     TEST_PRINTF("Starting pause/resume test\n");
 
-    TEST_PRINTF("\n=== Test 2: Watchdog Pause/Resume ===\n");
+    TEST_GROUP_BEGIN("Watchdog Pause/Resume");
 
     /* Start watchdog with short timeout */
     #ifdef PLATFORM_MSP430
@@ -88,8 +88,8 @@ void test_watchdog_pause_resume(void)
     }
 
     TEST_PRINTF("Pause/resume test completed successfully\n");
-    TEST_PRINTF("\nPause/Resume test completed successfully!\n");
     tiku_watchdog_off();
+    TEST_GROUP_END("Watchdog Pause/Resume");
 }
 
 #endif /* TEST_WDT_PAUSE_RESUME */

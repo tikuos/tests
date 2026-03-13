@@ -46,9 +46,9 @@ void test_watchdog_interval_timer(void)
 {
     TEST_PRINTF("Starting interval timer test\n");
 
-    TEST_PRINTF("\n=== Test 3: Interval Timer Mode ===\n");
+    TEST_GROUP_BEGIN("Interval Timer Mode");
     TEST_PRINTF("WDT will generate interrupts every ~250ms\n");
-    TEST_PRINTF("LED2 will toggle on each interrupt\n\n");
+    TEST_PRINTF("LED2 will toggle on each interrupt\n");
 
     /* First, make sure WDT is off */
     tiku_watchdog_off();
@@ -79,8 +79,8 @@ void test_watchdog_interval_timer(void)
     WDTCTL = WDTPW | WDTHOLD;  /* Stop WDT */
 
     TEST_PRINTF("Interval timer test completed with %u interrupts\n", interval_isr_count);
-    TEST_PRINTF("\nInterval timer test completed!\n");
     TEST_PRINTF("Total interrupts: %u\n", interval_isr_count);
+    TEST_GROUP_END("Interval Timer Mode");
 }
 
 #endif /* TEST_WDT_INTERVAL */

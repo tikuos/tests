@@ -49,7 +49,7 @@ void test_htimer_periodic(void)
     tiku_htimer_clock_t target;
     unsigned int wait_loops;
 
-    TEST_PRINTF("\n=== Test: Hardware Timer Periodic ===\n");
+    TEST_GROUP_BEGIN("Hardware Timer Periodic");
 
     htimer_periodic_count = 0;
 
@@ -60,11 +60,8 @@ void test_htimer_periodic(void)
     ret = tiku_htimer_set(&periodic_ht, target,
                           test_htimer_periodic_cb, NULL);
 
-    if (ret == TIKU_HTIMER_OK) {
-        TEST_PRINTF("HTimer periodic: started, expecting %u ticks\n",
-                     TEST_HTIMER_REPEAT_CNT);
-    } else {
-        TEST_PRINTF("FAIL: tiku_htimer_set returned %d\n", ret);
+    TEST_ASSERT(ret == TIKU_HTIMER_OK, "tiku_htimer_set succeeded");
+    if (ret != TIKU_HTIMER_OK) {
         return;
     }
 
@@ -76,25 +73,16 @@ void test_htimer_periodic(void)
         __no_operation();
     }
 
-    if (htimer_periodic_count == TEST_HTIMER_REPEAT_CNT) {
-        TEST_PRINTF("PASS: HTimer periodic completed %u ticks\n",
-                     TEST_HTIMER_REPEAT_CNT);
-        tiku_common_led1_toggle();
-    } else {
-        TEST_PRINTF("FAIL: HTimer periodic count = %u (expected %u)\n",
-                     htimer_periodic_count, TEST_HTIMER_REPEAT_CNT);
-    }
+    TEST_ASSERT(htimer_periodic_count == TEST_HTIMER_REPEAT_CNT,
+                "HTimer periodic completed expected ticks");
 
     /* After final tick, no reschedule, so nothing pending */
-    if (!tiku_htimer_is_scheduled()) {
-        TEST_PRINTF("PASS: No htimer scheduled after final tick\n");
-        tiku_common_led1_toggle();
-    } else {
-        TEST_PRINTF("FAIL: HTimer still scheduled after final tick\n");
+    TEST_ASSERT(!tiku_htimer_is_scheduled(), "No htimer scheduled after final tick");
+    if (tiku_htimer_is_scheduled()) {
         tiku_htimer_cancel();
     }
 
-    TEST_PRINTF("Hardware timer periodic test completed\n\n");
+    TEST_GROUP_END("Hardware Timer Periodic");
 }
 
 #endif /* TEST_HTIMER_PERIODIC */

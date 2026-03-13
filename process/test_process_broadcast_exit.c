@@ -90,7 +90,7 @@ TIKU_PROCESS_THREAD(test_bce_proc_c, ev, data)
 
 void test_process_broadcast_exit(void)
 {
-    TEST_PRINTF("\n=== Test: Broadcast Exit Safety ===\n");
+    TEST_GROUP_BEGIN("Broadcast Exit Safety");
 
     bce_count_a = 0;
     bce_count_b = 0;
@@ -113,44 +113,21 @@ void test_process_broadcast_exit(void)
     }
 
     /* A must have received the event */
-    if (bce_count_a == 1) {
-        TEST_PRINTF("PASS: Process A received broadcast\n");
-        tiku_common_led1_toggle();
-    } else {
-        TEST_PRINTF("FAIL: Process A count = %d (expected 1)\n",
-                     bce_count_a);
-    }
+    TEST_ASSERT(bce_count_a == 1, "Process A received broadcast");
 
     /* B received it and then exited */
-    if (bce_count_b == 1) {
-        TEST_PRINTF("PASS: Process B received broadcast before exit\n");
-        tiku_common_led1_toggle();
-    } else {
-        TEST_PRINTF("FAIL: Process B count = %d (expected 1)\n",
-                     bce_count_b);
-    }
+    TEST_ASSERT(bce_count_b == 1, "Process B received broadcast before exit");
 
     /* B must actually be stopped */
-    if (!test_bce_proc_b.is_running) {
-        TEST_PRINTF("PASS: Process B exited during broadcast\n");
-        tiku_common_led1_toggle();
-    } else {
-        TEST_PRINTF("FAIL: Process B still running\n");
-    }
+    TEST_ASSERT(!test_bce_proc_b.is_running, "Process B exited during broadcast");
 
     /* C must have received the event despite B unlinking mid-iteration */
-    if (bce_count_c == 1) {
-        TEST_PRINTF("PASS: Process C received broadcast after B exited\n");
-        tiku_common_led1_toggle();
-    } else {
-        TEST_PRINTF("FAIL: Process C count = %d (expected 1)\n",
-                     bce_count_c);
-    }
+    TEST_ASSERT(bce_count_c == 1, "Process C received broadcast after B exited");
 
     /* Clean up */
     tiku_process_exit(&test_bce_proc_a);
     tiku_process_exit(&test_bce_proc_c);
-    TEST_PRINTF("Broadcast exit safety test completed\n\n");
+    TEST_GROUP_END("Broadcast Exit Safety");
 }
 
 #endif /* TEST_PROCESS_BROADCAST_EXIT */

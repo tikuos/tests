@@ -831,6 +831,94 @@
                    TEST_POOL_BLOCK_ALIGN || TEST_POOL_STATS ||             \
                    TEST_POOL_POISON || TEST_POOL_WITHIN_BUF)
 
+/*---------------------------------------------------------------------------*/
+/* TIKUKITS TESTS (only when tikukits library is present)                    */
+/*---------------------------------------------------------------------------*/
+
+#if defined(HAS_TIKUKITS)
+
+/**
+ * Enable TikuKits matrix tests.
+ * Tests matrix init, identity, get/set, copy, add/sub, multiply,
+ * scale, transpose, determinant, trace, dimension mismatches, and
+ * null input handling for the fixed-point linear algebra module.
+ */
+#define TEST_KITS_MATRIX 0
+
+/**
+ * Enable TikuKits statistics tests.
+ * Tests windowed statistics, Welford online variance, min/max
+ * tracking, EWMA filtering, energy computation, integer square root,
+ * and null input handling.
+ */
+#define TEST_KITS_STATISTICS 0
+
+/**
+ * Enable TikuKits distance metric tests.
+ * Tests Manhattan, squared Euclidean, dot product, squared cosine
+ * similarity, Hamming distance, and null input handling.
+ */
+#define TEST_KITS_DISTANCE 0
+
+/**
+ * Enable TikuKits sensor tests.
+ * Tests fractional conversion helpers and sensor name lookups for
+ * the hardware-abstracted sensor interface (MCP9808, ADT7410,
+ * DS18B20).
+ */
+#define TEST_KITS_SENSOR 0
+
+/**
+ * Enable TikuKits signal feature tests.
+ * Tests peak detection, zero-crossing rate, histogram binning,
+ * delta encoding, Goertzel single-frequency DFT, z-score
+ * normalization, scaling, and null input handling.
+ */
+#define TEST_KITS_SIGFEATURES 0
+
+/**
+ * Enable TikuKits text compression tests.
+ * Tests RLE, byte-pair encoding, heatshrink compress/decompress
+ * round-trips, and null input handling.
+ */
+#define TEST_KITS_TEXTCOMPRESSION 0
+
+/** Auto-derived: true if any TikuKits maths test is enabled */
+#define TEST_KITS_MATHS (TEST_KITS_MATRIX || TEST_KITS_STATISTICS ||        \
+                         TEST_KITS_DISTANCE)
+
+/** Auto-derived: true if any TikuKits test is enabled */
+#define TEST_KITS (TEST_KITS_MATHS || TEST_KITS_SENSOR ||                   \
+                   TEST_KITS_SIGFEATURES || TEST_KITS_TEXTCOMPRESSION)
+
+#else /* HAS_TIKUKITS not defined */
+
+#define TEST_KITS           0
+#define TEST_KITS_MATHS     0
+#define TEST_KITS_MATRIX    0
+#define TEST_KITS_STATISTICS 0
+#define TEST_KITS_DISTANCE  0
+#define TEST_KITS_SENSOR    0
+#define TEST_KITS_SIGFEATURES 0
+#define TEST_KITS_TEXTCOMPRESSION 0
+
+#endif /* HAS_TIKUKITS */
+
+/*---------------------------------------------------------------------------*/
+/* MUTUAL EXCLUSION: only one test category at a time                        */
+/*---------------------------------------------------------------------------*/
+
+#define _TEST_CATEGORY_COUNT                                                 \
+    (!!TEST_WATCHDOG + !!TEST_CPUCLOCK + !!TEST_PROCESS + !!TEST_TIMER +     \
+     !!TEST_MEM + !!TEST_PERSIST + !!TEST_MPU + !!TEST_POOL +               \
+     !!TEST_REGION + !!TEST_KITS_MATRIX + !!TEST_KITS_STATISTICS +          \
+     !!TEST_KITS_DISTANCE + !!TEST_KITS_SENSOR + !!TEST_KITS_SIGFEATURES + \
+     !!TEST_KITS_TEXTCOMPRESSION)
+
+#if TEST_ENABLE && (_TEST_CATEGORY_COUNT > 1)
+#error "Only one test category may be enabled at a time"
+#endif
+
 /** @} */ /* End of TIKU_TEST_CONFIG group */
 
 #endif /* TIKU_TEST_CONFIG_H_ */

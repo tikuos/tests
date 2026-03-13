@@ -53,7 +53,7 @@ void test_process_events(void)
     unsigned int i;
     unsigned int posted;
 
-    TEST_PRINTF("\n=== Test: Event Posting ===\n");
+    TEST_GROUP_BEGIN("Event Posting");
 
     event_recv_count = 0;
 
@@ -69,9 +69,7 @@ void test_process_events(void)
     for (i = 0; i < TEST_NUM_EVENTS; i++) {
         posted = tiku_process_post(&test_event_proc,
                                     TEST_EVENT_CUSTOM, NULL);
-        if (!posted) {
-            TEST_PRINTF("FAIL: Could not post event %d (queue full)\n", i);
-        }
+        TEST_ASSERT(posted, "Post event succeeds");
     }
 
     /* Run scheduler to deliver all events */
@@ -79,27 +77,16 @@ void test_process_events(void)
         /* drain */
     }
 
-    if (event_recv_count == TEST_NUM_EVENTS) {
-        TEST_PRINTF("PASS: All %d custom events received\n",
-                     TEST_NUM_EVENTS);
-        tiku_common_led1_toggle();
-    } else {
-        TEST_PRINTF("FAIL: Expected %d events, got %d\n",
-                     TEST_NUM_EVENTS, event_recv_count);
-    }
+    TEST_ASSERT(event_recv_count == TEST_NUM_EVENTS, "All custom events received");
 
     /* Verify queue return value: post should succeed */
     posted = tiku_process_post(&test_event_proc,
                                 TEST_EVENT_CUSTOM, NULL);
-    if (posted) {
-        TEST_PRINTF("PASS: Post returns 1 on success\n");
-    } else {
-        TEST_PRINTF("FAIL: Post returned 0 unexpectedly\n");
-    }
+    TEST_ASSERT(posted, "Post returns 1 on success");
 
     /* Clean up */
     tiku_process_exit(&test_event_proc);
-    TEST_PRINTF("Event posting test completed\n\n");
+    TEST_GROUP_END("Event Posting");
 }
 
 #endif /* TEST_PROCESS_EVENTS */

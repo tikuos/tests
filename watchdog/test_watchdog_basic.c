@@ -39,9 +39,9 @@ void test_watchdog_basic(void)
 {
     TEST_PRINTF("Starting basic watchdog test\n");
 
-    TEST_PRINTF("\n=== Test 1: Basic Watchdog Operation ===\n");
+    TEST_GROUP_BEGIN("Basic Watchdog Operation");
     TEST_PRINTF("Watchdog will be kicked every 500ms\n");
-    TEST_PRINTF("LED1 will blink to show system is alive\n\n");
+    TEST_PRINTF("LED1 will blink to show system is alive\n");
 
     /* Configure watchdog:
      * - Watchdog mode (not interval)
@@ -77,8 +77,8 @@ void test_watchdog_basic(void)
         /* Stop after 30 kicks for demo */
         if (wdt_kick_count >= 30) {
             TEST_PRINTF("Basic watchdog test completed after %d kicks\n", wdt_kick_count);
-            TEST_PRINTF("\nBasic watchdog test completed successfully!\n");
             tiku_watchdog_off();
+            TEST_GROUP_END("Basic Watchdog Operation");
             break;
         }
     }

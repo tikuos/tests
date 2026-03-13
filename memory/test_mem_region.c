@@ -33,12 +33,13 @@ void test_region_init_valid(void)
     const tiku_mem_region_t *table;
     tiku_mem_err_t err;
 
-    TEST_PRINT("\n--- Test: Region Init Valid ---\n");
+    TEST_GROUP_BEGIN("Region Init Valid");
 
     table = tiku_region_arch_get_table(&count);
     err = tiku_region_init(table, count);
     TEST_ASSERT(err == TIKU_MEM_OK, "init with valid table succeeds");
     TEST_ASSERT(count >= 2, "table has at least SRAM and NVM regions");
+    TEST_GROUP_END("Region Init Valid");
 }
 
 /*---------------------------------------------------------------------------*/
@@ -60,7 +61,7 @@ void test_region_init_invalid(void)
         { test_sram_pool + 64, 128, TIKU_MEM_REGION_SRAM },
     };
 
-    TEST_PRINT("\n--- Test: Region Init Invalid ---\n");
+    TEST_GROUP_BEGIN("Region Init Invalid");
 
     /* NULL table */
     err = tiku_region_init(NULL, 1);
@@ -77,6 +78,7 @@ void test_region_init_invalid(void)
 
     /* Restore valid state for subsequent tests */
     test_region_reinit();
+    TEST_GROUP_END("Region Init Invalid");
 }
 
 /*---------------------------------------------------------------------------*/
@@ -87,7 +89,7 @@ void test_region_contains_basic(void)
 {
     int result;
 
-    TEST_PRINT("\n--- Test: Region Contains Basic ---\n");
+    TEST_GROUP_BEGIN("Region Contains Basic");
     test_region_reinit();
 
     /* SRAM buffer in SRAM region */
@@ -105,6 +107,7 @@ void test_region_contains_basic(void)
     /* Zero size rejected */
     result = tiku_region_contains(test_sram_pool, 0, TIKU_MEM_REGION_SRAM);
     TEST_ASSERT(result == 0, "zero size rejected");
+    TEST_GROUP_END("Region Contains Basic");
 }
 
 /*---------------------------------------------------------------------------*/
@@ -115,7 +118,7 @@ void test_region_contains_wrong_type(void)
 {
     int result;
 
-    TEST_PRINT("\n--- Test: Region Contains Wrong Type ---\n");
+    TEST_GROUP_BEGIN("Region Contains Wrong Type");
     test_region_reinit();
 
     /* SRAM buffer should not match NVM type */
@@ -130,6 +133,7 @@ void test_region_contains_wrong_type(void)
     result = tiku_region_contains(test_sram_pool, 64,
                                    TIKU_MEM_REGION_PERIPHERAL);
     TEST_ASSERT(result == 0, "SRAM buffer not PERIPHERAL");
+    TEST_GROUP_END("Region Contains Wrong Type");
 }
 
 /*---------------------------------------------------------------------------*/
@@ -151,7 +155,7 @@ void test_region_contains_boundary(void)
         { test_nvm_pool,  TEST_NVM_POOL_SIZE,  TIKU_MEM_REGION_NVM  },
     };
 
-    TEST_PRINT("\n--- Test: Region Contains Boundary ---\n");
+    TEST_GROUP_BEGIN("Region Contains Boundary");
     tiku_region_init(boundary_table, 2);
 
     /* Exact full region — should pass */
@@ -183,6 +187,7 @@ void test_region_contains_boundary(void)
 
     /* Restore platform table for subsequent tests */
     test_region_reinit();
+    TEST_GROUP_END("Region Contains Boundary");
 }
 
 /*---------------------------------------------------------------------------*/
@@ -195,7 +200,7 @@ void test_region_contains_overflow(void)
     const uint8_t *wrap_ptr;
     int result;
 
-    TEST_PRINT("\n--- Test: Region Contains Overflow ---\n");
+    TEST_GROUP_BEGIN("Region Contains Overflow");
     test_region_reinit();
 
     /*
@@ -208,6 +213,7 @@ void test_region_contains_overflow(void)
 
     result = tiku_region_contains(wrap_ptr, 20, TIKU_MEM_REGION_SRAM);
     TEST_ASSERT(result == 0, "wrapping pointer range rejected");
+    TEST_GROUP_END("Region Contains Overflow");
 }
 
 /*---------------------------------------------------------------------------*/
@@ -218,7 +224,7 @@ void test_region_claim_unclaim(void)
 {
     tiku_mem_err_t err;
 
-    TEST_PRINT("\n--- Test: Region Claim and Unclaim ---\n");
+    TEST_GROUP_BEGIN("Region Claim and Unclaim");
     test_region_reinit();
 
     /* Claim a range in the SRAM pool */
@@ -242,6 +248,7 @@ void test_region_claim_unclaim(void)
     /* Can re-claim after unclaim */
     err = tiku_region_claim(test_sram_pool, 64, 2);
     TEST_ASSERT(err == TIKU_MEM_OK, "re-claim after unclaim succeeds");
+    TEST_GROUP_END("Region Claim and Unclaim");
 }
 
 /*---------------------------------------------------------------------------*/
@@ -252,7 +259,7 @@ void test_region_claim_overlap(void)
 {
     tiku_mem_err_t err;
 
-    TEST_PRINT("\n--- Test: Region Claim Overlap ---\n");
+    TEST_GROUP_BEGIN("Region Claim Overlap");
     test_region_reinit();
 
     /* Claim [0, 64) */
@@ -278,6 +285,7 @@ void test_region_claim_overlap(void)
     err = tiku_region_claim(test_sram_pool + 64, 64, 5);
     TEST_ASSERT(err == TIKU_MEM_OK,
                 "adjacent claim succeeds (no overlap)");
+    TEST_GROUP_END("Region Claim Overlap");
 }
 
 /*---------------------------------------------------------------------------*/
@@ -300,7 +308,7 @@ void test_region_claim_unknown(void)
         { test_nvm_pool,  TEST_NVM_POOL_SIZE,  TIKU_MEM_REGION_NVM  },
     };
 
-    TEST_PRINT("\n--- Test: Region Claim Unknown Memory ---\n");
+    TEST_GROUP_BEGIN("Region Claim Unknown Memory");
     tiku_region_init(pool_table, 2);
 
     /* Address just past the end of the SRAM pool — not in any region */
@@ -321,6 +329,7 @@ void test_region_claim_unknown(void)
 
     /* Restore platform table */
     test_region_reinit();
+    TEST_GROUP_END("Region Claim Unknown Memory");
 }
 
 /*---------------------------------------------------------------------------*/
@@ -332,7 +341,7 @@ void test_region_claim_full(void)
     tiku_mem_err_t err;
     tiku_mem_arch_size_t i;
 
-    TEST_PRINT("\n--- Test: Region Claim Table Full ---\n");
+    TEST_GROUP_BEGIN("Region Claim Table Full");
     test_region_reinit();
 
     /* Fill all claim slots with non-overlapping 8-byte ranges */
@@ -346,6 +355,7 @@ void test_region_claim_full(void)
         test_sram_pool + TIKU_REGION_MAX_CLAIMS * 8, 8, 99);
     TEST_ASSERT(err == TIKU_MEM_ERR_FULL,
                 "claim beyond max returns FULL");
+    TEST_GROUP_END("Region Claim Table Full");
 }
 
 /*---------------------------------------------------------------------------*/
@@ -357,7 +367,7 @@ void test_region_get_type_found(void)
     tiku_mem_region_type_t out_type;
     tiku_mem_err_t err;
 
-    TEST_PRINT("\n--- Test: Region Get Type ---\n");
+    TEST_GROUP_BEGIN("Region Get Type");
     test_region_reinit();
 
     /* Address in SRAM pool */
@@ -380,6 +390,7 @@ void test_region_get_type_found(void)
         test_nvm_pool + TEST_NVM_POOL_SIZE - 1, &out_type);
     TEST_ASSERT(err == TIKU_MEM_OK, "get_type at region end succeeds");
     TEST_ASSERT(out_type == TIKU_MEM_REGION_NVM, "type at end is NVM");
+    TEST_GROUP_END("Region Get Type");
 }
 
 /*---------------------------------------------------------------------------*/
@@ -401,7 +412,7 @@ void test_region_get_type_not_found(void)
         { test_nvm_pool,  TEST_NVM_POOL_SIZE,  TIKU_MEM_REGION_NVM  },
     };
 
-    TEST_PRINT("\n--- Test: Region Get Type Not Found ---\n");
+    TEST_GROUP_BEGIN("Region Get Type Not Found");
     tiku_region_init(pool_table, 2);
 
     /* Address past the end of the NVM pool */
@@ -422,4 +433,5 @@ void test_region_get_type_not_found(void)
 
     /* Restore platform table */
     test_region_reinit();
+    TEST_GROUP_END("Region Get Type Not Found");
 }

@@ -54,7 +54,7 @@ void test_timer_event(void)
 {
     unsigned int loops;
 
-    TEST_PRINTF("\n=== Test: Event Timer ===\n");
+    TEST_GROUP_BEGIN("Event Timer");
 
     event_timer_fired = 0;
 
@@ -82,23 +82,12 @@ void test_timer_event(void)
         }
     }
 
-    if (event_timer_fired) {
-        TEST_PRINTF("PASS: Event timer fired after %u poll loops\n", loops);
-        tiku_common_led1_toggle();
-    } else {
-        TEST_PRINTF("FAIL: Event timer did not fire within %u loops\n",
-                     TEST_TIMER_DRAIN_MAX);
-    }
+    TEST_ASSERT(event_timer_fired, "Event timer fired");
 
     /* Verify timer is no longer active */
-    if (tiku_timer_expired(&event_tmr)) {
-        TEST_PRINTF("PASS: Timer reports expired\n");
-        tiku_common_led1_toggle();
-    } else {
-        TEST_PRINTF("FAIL: Timer still reports active\n");
-    }
+    TEST_ASSERT(tiku_timer_expired(&event_tmr), "Timer reports expired");
 
-    TEST_PRINTF("Event timer test completed\n\n");
+    TEST_GROUP_END("Event Timer");
 }
 
 #endif /* TEST_TIMER_EVENT */

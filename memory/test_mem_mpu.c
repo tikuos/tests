@@ -29,7 +29,7 @@
 
 void test_mpu_init_defaults(void)
 {
-    TEST_PRINT("\n--- Test: MPU Init Defaults ---\n");
+    TEST_GROUP_BEGIN("MPU Init Defaults");
 
     tiku_mpu_init();
 
@@ -40,6 +40,7 @@ void test_mpu_init_defaults(void)
     /* MPU should be enabled (MPUENA = 0x0001 in lower byte) */
     TEST_ASSERT((tiku_mpu_arch_get_ctl() & 0x0001) != 0,
                 "CTL has enable bit set after init");
+    TEST_GROUP_END("MPU Init Defaults");
 }
 
 /*---------------------------------------------------------------------------*/
@@ -50,7 +51,7 @@ void test_mpu_unlock_lock(void)
 {
     uint16_t saved;
 
-    TEST_PRINT("\n--- Test: MPU Unlock / Lock ---\n");
+    TEST_GROUP_BEGIN("MPU Unlock / Lock");
 
     tiku_mpu_init();
 
@@ -65,6 +66,7 @@ void test_mpu_unlock_lock(void)
     tiku_mpu_lock_nvm(saved);
     TEST_ASSERT(tiku_mpu_arch_get_sam() == 0x0555,
                 "SAM restored to 0x0555 after lock");
+    TEST_GROUP_END("MPU Unlock / Lock");
 }
 
 /*---------------------------------------------------------------------------*/
@@ -75,7 +77,7 @@ void test_mpu_set_permissions(void)
 {
     uint16_t sam;
 
-    TEST_PRINT("\n--- Test: MPU Set Permissions ---\n");
+    TEST_GROUP_BEGIN("MPU Set Permissions");
 
     tiku_mpu_init();
     TEST_ASSERT(tiku_mpu_arch_get_sam() == 0x0555, "baseline is 0x0555");
@@ -91,6 +93,7 @@ void test_mpu_set_permissions(void)
                 "segment 2 unchanged (R+X)");
     TEST_ASSERT((sam & 0x0F00) == 0x0300,
                 "segment 3 set to RD_WR (0x3)");
+    TEST_GROUP_END("MPU Set Permissions");
 }
 
 /*---------------------------------------------------------------------------*/
@@ -114,7 +117,7 @@ void test_mpu_scoped_write(void)
 {
     scoped_write_ctx_t ctx;
 
-    TEST_PRINT("\n--- Test: MPU Scoped Write ---\n");
+    TEST_GROUP_BEGIN("MPU Scoped Write");
 
     tiku_mpu_init();
 
@@ -129,6 +132,7 @@ void test_mpu_scoped_write(void)
                 "SAM had write bits during callback");
     TEST_ASSERT(tiku_mpu_arch_get_sam() == 0x0555,
                 "SAM locked again after scoped_write");
+    TEST_GROUP_END("MPU Scoped Write");
 }
 
 /*---------------------------------------------------------------------------*/
@@ -139,7 +143,7 @@ void test_mpu_idempotent(void)
 {
     uint16_t saved1, saved2;
 
-    TEST_PRINT("\n--- Test: MPU Lock/Unlock Idempotency ---\n");
+    TEST_GROUP_BEGIN("MPU Lock/Unlock Idempotency");
 
     tiku_mpu_init();
 
@@ -162,6 +166,7 @@ void test_mpu_idempotent(void)
     tiku_mpu_lock_nvm(saved1);
     TEST_ASSERT(tiku_mpu_arch_get_sam() == 0x0555,
                 "lock with original saved state restores 0x0555");
+    TEST_GROUP_END("MPU Lock/Unlock Idempotency");
 }
 
 /*---------------------------------------------------------------------------*/
@@ -172,7 +177,7 @@ void test_mpu_all_segments(void)
 {
     uint16_t sam;
 
-    TEST_PRINT("\n--- Test: MPU All Segments Independent ---\n");
+    TEST_GROUP_BEGIN("MPU All Segments Independent");
 
     tiku_mpu_init();
 
@@ -199,6 +204,7 @@ void test_mpu_all_segments(void)
                 "segment 2 now EXEC-only (0x4)");
     TEST_ASSERT((sam & 0x0F00) == 0x0700,
                 "segment 3 unchanged after seg2 update");
+    TEST_GROUP_END("MPU All Segments Independent");
 }
 
 /*---------------------------------------------------------------------------*/
@@ -209,7 +215,7 @@ void test_mpu_permission_flags(void)
 {
     uint16_t sam;
 
-    TEST_PRINT("\n--- Test: MPU Permission Flags ---\n");
+    TEST_GROUP_BEGIN("MPU Permission Flags");
 
     /* Test each permission enum value on segment 1 (bits [3:0]) */
 
@@ -243,6 +249,7 @@ void test_mpu_permission_flags(void)
     sam = tiku_mpu_arch_get_sam();
     TEST_ASSERT((sam & 0x000F) == 0x0007,
                 "TIKU_MPU_ALL maps to 0x07");
+    TEST_GROUP_END("MPU Permission Flags");
 }
 
 /*---------------------------------------------------------------------------*/
@@ -251,7 +258,7 @@ void test_mpu_permission_flags(void)
 
 void test_mpu_reinit_restores(void)
 {
-    TEST_PRINT("\n--- Test: MPU Re-init Restores Defaults ---\n");
+    TEST_GROUP_BEGIN("MPU Re-init Restores Defaults");
 
     tiku_mpu_init();
 
@@ -270,6 +277,7 @@ void test_mpu_reinit_restores(void)
                 "SAM restored to 0x0555 after re-init");
     TEST_ASSERT((tiku_mpu_arch_get_ctl() & 0x0001) != 0,
                 "MPU still enabled after re-init");
+    TEST_GROUP_END("MPU Re-init Restores Defaults");
 }
 
 /*---------------------------------------------------------------------------*/
@@ -280,7 +288,7 @@ void test_mpu_unlock_custom_base(void)
 {
     uint16_t saved, sam;
 
-    TEST_PRINT("\n--- Test: MPU Unlock Custom Base ---\n");
+    TEST_GROUP_BEGIN("MPU Unlock Custom Base");
 
     tiku_mpu_init();
 
@@ -313,6 +321,7 @@ void test_mpu_unlock_custom_base(void)
     tiku_mpu_lock_nvm(saved);
     TEST_ASSERT(tiku_mpu_arch_get_sam() == 0x0541,
                 "lock restores custom base 0x0541");
+    TEST_GROUP_END("MPU Unlock Custom Base");
 }
 
 /*---------------------------------------------------------------------------*/
@@ -330,7 +339,7 @@ void test_mpu_scoped_write_custom(void)
 {
     scoped_write_ctx_t ctx;
 
-    TEST_PRINT("\n--- Test: MPU Scoped Write Custom Base ---\n");
+    TEST_GROUP_BEGIN("MPU Scoped Write Custom Base");
 
     tiku_mpu_init();
 
@@ -354,6 +363,7 @@ void test_mpu_scoped_write_custom(void)
     /* After: restored to custom base */
     TEST_ASSERT(tiku_mpu_arch_get_sam() == 0x0554,
                 "SAM restored to custom base 0x0554 after scoped write");
+    TEST_GROUP_END("MPU Scoped Write Custom Base");
 }
 
 /*---------------------------------------------------------------------------*/
@@ -377,7 +387,7 @@ void test_mpu_violation_detect(void)
     uint16_t flags;
     uint16_t saved;
 
-    TEST_PRINT("\n--- Test: MPU Violation Detection ---\n");
+    TEST_GROUP_BEGIN("MPU Violation Detection");
 
     tiku_mpu_init();
     tiku_mpu_enable_violation_nmi();
@@ -434,4 +444,5 @@ void test_mpu_violation_detect(void)
                 "no violation when segment is writable");
 
     tiku_mpu_lock_nvm(saved);
+    TEST_GROUP_END("MPU Violation Detection");
 }
