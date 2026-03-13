@@ -56,12 +56,22 @@
 
 
 
+
+
+
+
+
 /*---------------------------------------------------------------------------*/
 /* WATCHDOG TESTS                                                            */
 /*---------------------------------------------------------------------------*/
 
 /** Enable watchdog timer tests */
 #define TEST_WATCHDOG 0
+
+
+
+
+
 
 
 
@@ -102,6 +112,11 @@
 
 
 
+
+
+
+
+
 /**
  * Enable watchdog pause/resume test.
  * Pauses the watchdog timer, waits longer than the configured timeout
@@ -109,6 +124,11 @@
  * during the pause window, confirming pause truly halts the countdown.
  */
 #define TEST_WDT_PAUSE_RESUME 0
+
+
+
+
+
 
 
 
@@ -148,6 +168,11 @@
 
 
 
+
+
+
+
+
 /**
  * Enable watchdog timeout test.
  * WARNING: This test intentionally does NOT kick the watchdog, causing
@@ -157,6 +182,11 @@
  * watchdog reset behavior.
  */
 #define TEST_WDT_TIMEOUT 0
+
+
+
+
+
 
 
 
@@ -201,6 +231,11 @@
 
 
 
+
+
+
+
+
 /*---------------------------------------------------------------------------*/
 /* PROCESS TESTS                                                             */
 /*---------------------------------------------------------------------------*/
@@ -213,6 +248,11 @@
  * automatically at the PROCESS_END macro without explicit cleanup.
  */
 #define TEST_PROCESS_LIFECYCLE 0
+
+
+
+
+
 
 
 
@@ -253,6 +293,11 @@
 
 
 
+
+
+
+
+
 /**
  * Enable cooperative yield test.
  * Validates protothread yielding across three execution phases: first
@@ -261,6 +306,11 @@
  * terminates automatically without an explicit exit call.
  */
 #define TEST_PROCESS_YIELD 0
+
+
+
+
+
 
 
 
@@ -301,6 +351,11 @@
 
 
 
+
+
+
+
+
 /**
  * Enable process poll test.
  * Requests multiple poll events (TEST_NUM_POLLS) on a target process
@@ -308,6 +363,11 @@
  * TIKU_EVENT_POLL events were received by the target process.
  */
 #define TEST_PROCESS_POLL 0
+
+
+
+
+
 
 
 
@@ -349,6 +409,11 @@
 
 
 
+
+
+
+
+
 /**
  * Enable process local storage test.
  * Tests two local storage patterns: TIKU_PROCESS_WITH_LOCAL with the
@@ -374,6 +439,11 @@
 
 
 
+
+
+
+
+
 /**
  * Enable broadcast exit safety test.
  * Starts three processes and posts a broadcast event. The middle
@@ -383,6 +453,11 @@
  * when a process removes itself mid-broadcast.
  */
 #define TEST_PROCESS_BROADCAST_EXIT 0
+
+
+
+
+
 
 
 
@@ -425,6 +500,11 @@
 
 
 
+
+
+
+
+
 /**
  * Enable current process cleared after dispatch test.
  * Verifies TIKU_THIS() returns the correct process pointer inside
@@ -433,6 +513,11 @@
  * to the dispatched process from persisting between scheduler runs.
  */
 #define TEST_PROCESS_CURRENT_CLEARED 0
+
+
+
+
+
 
 
 
@@ -462,7 +547,12 @@
 /*---------------------------------------------------------------------------*/
 
 /** Enable timer subsystem tests */
-#define TEST_TIMER 1
+#define TEST_TIMER 0
+
+
+
+
+
 
 
 
@@ -486,7 +576,12 @@
  * TIKU_EVENT_TIMER fires when the interval expires. Confirms the
  * timer reports expired status after firing.
  */
-#define TEST_TIMER_EVENT 1
+#define TEST_TIMER_EVENT 0
+
+
+
+
+
 
 
 
@@ -509,7 +604,12 @@
  * clock ticks and process scheduler, and verifies the callback function
  * fires exactly once after the configured interval elapses.
  */
-#define TEST_TIMER_CALLBACK 1
+#define TEST_TIMER_CALLBACK 0
+
+
+
+
+
 
 
 
@@ -533,7 +633,12 @@
  * asserts all periodic callbacks fire at the expected intervals. Verifies
  * the timer stops after the final iteration with no further callbacks.
  */
-#define TEST_TIMER_PERIODIC 1
+#define TEST_TIMER_PERIODIC 0
+
+
+
+
+
 
 
 
@@ -557,7 +662,12 @@
  * afterward and confirms the callback never fires despite polling well
  * past the original timeout duration.
  */
-#define TEST_TIMER_STOP 1
+#define TEST_TIMER_STOP 0
+
+
+
+
+
 
 
 
@@ -581,7 +691,12 @@
  * callback fired at the correct time, and asserts no timer remains
  * scheduled afterward.
  */
-#define TEST_HTIMER_BASIC 1
+#define TEST_HTIMER_BASIC 0
+
+
+
+
+
 
 
 
@@ -606,7 +721,12 @@
  * Busy-waits for all iterations and confirms nothing remains scheduled
  * after the final tick.
  */
-#define TEST_HTIMER_PERIODIC 1
+#define TEST_HTIMER_PERIODIC 0
+
+
+
+
+
 
 
 
@@ -650,6 +770,11 @@
 
 
 
+
+
+
+
+
 /**
  * Enable basic allocation and pointer correctness test.
  * Allocates two sequential blocks (8 and 4 bytes), verifies the first
@@ -658,6 +783,11 @@
  * checks used_bytes (12) and alloc_count (2) track correctly.
  */
 #define TEST_MEM_ALLOC 0
+
+
+
+
+
 
 
 
@@ -698,6 +828,11 @@
 
 
 
+
+
+
+
+
 /**
  * Enable arena full returns NULL test.
  * Creates a 4*alignment-sized arena, allocates 3*alignment bytes
@@ -706,6 +841,11 @@
  * a final 1-byte request fails when the arena is completely full.
  */
 #define TEST_MEM_FULL 0
+
+
+
+
+
 
 
 
@@ -746,6 +886,11 @@
 
 
 
+
+
+
+
+
 /**
  * Enable peak tracking across resets test.
  * Runs three allocate-reset cycles with varying sizes (12, 32, 8
@@ -770,6 +915,11 @@
 
 
 
+
+
+
+
+
 /**
  * Enable null and zero-size inputs rejected test.
  * Passes NULL arena, NULL buffer, NULL stats pointers, and zero-size
@@ -778,6 +928,11 @@
  * pointer without crashing or corrupting state.
  */
 #define TEST_MEM_INVALID 0
+
+
+
+
+
 
 
 
@@ -819,6 +974,11 @@
 
 
 
+
+
+
+
+
 /**
  * Enable two independent arenas test.
  * Creates two arenas backed by separate buffer regions with different
@@ -827,6 +987,11 @@
  * Resets one arena and confirms the other remains completely unaffected.
  */
 #define TEST_MEM_TWO_ARENAS 0
+
+
+
+
+
 
 
 
@@ -877,6 +1042,11 @@
 
 
 
+
+
+
+
+
 /**
  * Enable persist register and count test.
  * Registers one key-value entry with a FRAM-backed buffer, verifies
@@ -885,6 +1055,11 @@
  * with TIKU_MEM_ERR_INVALID.
  */
 #define TEST_PERSIST_REGISTER    0
+
+
+
+
+
 
 
 
@@ -925,6 +1100,11 @@
 
 
 
+
+
+
+
+
 /**
  * Enable persist read with too-small buffer test.
  * Writes 8 bytes to a key, then attempts to read into a 2-byte
@@ -933,6 +1113,11 @@
  * knows how large a buffer to provide.
  */
 #define TEST_PERSIST_SMALL_BUF   0
+
+
+
+
+
 
 
 
@@ -972,12 +1157,22 @@
 
 
 
+
+
+
+
+
 /**
  * Enable persist read non-existent key test.
  * Attempts to read a key that was never registered and asserts the
  * read returns TIKU_MEM_ERR_NOT_FOUND.
  */
 #define TEST_PERSIST_NOT_FOUND   0
+
+
+
+
+
 
 
 
@@ -1018,6 +1213,11 @@
 
 
 
+
+
+
+
+
 /**
  * Enable persist store full test.
  * Fills all TIKU_PERSIST_MAX_ENTRIES slots with individually registered
@@ -1026,6 +1226,11 @@
  * TIKU_MEM_ERR_FULL.
  */
 #define TEST_PERSIST_FULL        0
+
+
+
+
+
 
 
 
@@ -1051,6 +1256,11 @@
  * byte-for-byte match. Requires on-target execution.
  */
 #define TEST_PERSIST_REBOOT      0
+
+
+
+
+
 
 
 
@@ -1093,6 +1303,11 @@
 
 
 
+
+
+
+
+
 /**
  * Enable persist wear check test.
  * Verifies initial write_count is zero, manually elevates the counter
@@ -1117,6 +1332,11 @@
 
 
 
+
+
+
+
+
 /**
  * Enable persist register same key twice test.
  * Registers a key with buffer1, writes data, then re-registers the
@@ -1125,6 +1345,11 @@
  * with the correct length preserved.
  */
 #define TEST_PERSIST_DUP_KEY     0
+
+
+
+
+
 
 
 
@@ -1168,6 +1393,11 @@
 
 
 
+
+
+
+
+
 /**
  * Enable MPU unlock/lock FRAM test.
  * Calls tiku_mpu_unlock_nvm() and asserts the returned saved state
@@ -1192,6 +1422,11 @@
 
 
 
+
+
+
+
+
 /**
  * Enable MPU set permissions test.
  * Sets segment 3 to RD_WR (0x3) via tiku_mpu_set_permissions() and
@@ -1199,6 +1434,11 @@
  * segments 1 and 2 remain at their default R+X (0x5) values.
  */
 #define TEST_MPU_SET_PERM        0
+
+
+
+
+
 
 
 
@@ -1239,6 +1479,11 @@
 
 
 
+
+
+
+
+
 /**
  * Enable MPU lock/unlock idempotency test.
  * Locks when already locked and verifies the state is unchanged.
@@ -1247,6 +1492,11 @@
  * state and confirms correct final SAM value.
  */
 #define TEST_MPU_IDEMPOTENT      0
+
+
+
+
+
 
 
 
@@ -1287,6 +1537,11 @@
 
 
 
+
+
+
+
+
 /**
  * Enable MPU permission flags test.
  * Applies each permission enum value to segment 1 and reads back the
@@ -1295,6 +1550,11 @@
  * to hardware bit positions.
  */
 #define TEST_MPU_PERM_FLAGS      0
+
+
+
+
+
 
 
 
@@ -1335,6 +1595,11 @@
 
 
 
+
+
+
+
+
 /**
  * Enable MPU unlock with custom base permissions test.
  * Sets segments to non-default values (READ, EXEC, default), then
@@ -1343,6 +1608,11 @@
  * and confirms the custom base permissions are fully restored.
  */
 #define TEST_MPU_UNLOCK_CUSTOM   0
+
+
+
+
+
 
 
 
@@ -1383,6 +1653,11 @@
 
 
 
+
+
+
+
+
 /**
  * Enable MPU violation detection test.
  * Initializes MPU, enables violation NMI, clears flags, then triggers
@@ -1392,6 +1667,11 @@
  * do not trigger violations.
  */
 #define TEST_MPU_VIOLATION       0
+
+
+
+
+
 
 
 
@@ -1451,6 +1731,11 @@
 
 
 
+
+
+
+
+
 /**
  * Enable region init invalid (overlapping / NULL) test.
  * Passes NULL table pointer (rejected), zero count (rejected), and a
@@ -1475,6 +1760,11 @@
 
 
 
+
+
+
+
+
 /**
  * Enable region contains basic check test.
  * Verifies SRAM pool buffer is recognized as SRAM, NVM pool buffer is
@@ -1482,6 +1772,11 @@
  * rejected. Covers the basic happy-path and trivial-rejection cases.
  */
 #define TEST_REGION_CONTAINS     0
+
+
+
+
+
 
 
 
@@ -1522,6 +1817,11 @@
 
 
 
+
+
+
+
+
 /**
  * Enable region contains boundary conditions test.
  * Tests exact region size (passes), one byte past the end (fails),
@@ -1530,6 +1830,11 @@
  * valid address (passes). Exercises half-open interval arithmetic.
  */
 #define TEST_REGION_BOUNDARY     0
+
+
+
+
+
 
 
 
@@ -1570,6 +1875,11 @@
 
 
 
+
+
+
+
+
 /**
  * Enable region claim and unclaim test.
  * Claims a 64-byte SRAM range, unclaims it, asserts unclaiming the
@@ -1577,6 +1887,11 @@
  * NOT_FOUND, and confirms the range can be re-claimed after release.
  */
 #define TEST_REGION_CLAIM        0
+
+
+
+
+
 
 
 
@@ -1617,6 +1932,11 @@
 
 
 
+
+
+
+
+
 /**
  * Enable region claim unknown memory test.
  * Attempts to claim an address just past the SRAM pool end (outside
@@ -1641,12 +1961,22 @@
 
 
 
+
+
+
+
+
 /**
  * Enable region claim table full test.
  * Fills all TIKU_REGION_MAX_CLAIMS slots with non-overlapping 8-byte
  * ranges, then asserts one additional claim returns TIKU_MEM_ERR_FULL.
  */
 #define TEST_REGION_CLAIM_FULL   0
+
+
+
+
+
 
 
 
@@ -1687,6 +2017,11 @@
 
 
 
+
+
+
+
+
 /**
  * Enable region get type not found test.
  * Queries an address past the NVM pool end (returns NOT_FOUND), a
@@ -1694,6 +2029,11 @@
  * (returns NOT_FOUND). Covers all rejection paths in get_type().
  */
 #define TEST_REGION_NOT_FOUND    0
+
+
+
+
+
 
 
 
@@ -1746,6 +2086,11 @@
 
 
 
+
+
+
+
+
 /**
  * Enable pool basic alloc and free test.
  * Allocates two 8-byte blocks, verifies distinct non-overlapping
@@ -1754,6 +2099,11 @@
  * alloc_count decrements.
  */
 #define TEST_POOL_ALLOC_FREE     0
+
+
+
+
+
 
 
 
@@ -1794,6 +2144,11 @@
 
 
 
+
+
+
+
+
 /**
  * Enable pool free out-of-range pointer test.
  * Attempts to free pointers from a completely different buffer, past
@@ -1802,6 +2157,11 @@
  * from stray pointers.
  */
 #define TEST_POOL_FREE_RANGE     0
+
+
+
+
+
 
 
 
@@ -1841,6 +2201,11 @@
 
 
 
+
+
+
+
+
 /**
  * Enable pool alloc-free-realloc (LIFO) test.
  * Allocates p1 and p2, frees p2 then p1 (push order), and asserts the
@@ -1848,6 +2213,11 @@
  * returns p2, confirming LIFO freelist ordering.
  */
 #define TEST_POOL_REALLOC        0
+
+
+
+
+
 
 
 
@@ -1888,6 +2258,11 @@
 
 
 
+
+
+
+
+
 /**
  * Enable pool reset test.
  * Allocates all 4 blocks, calls reset, asserts alloc_count and
@@ -1896,6 +2271,11 @@
  * base, confirming the freelist was fully rebuilt.
  */
 #define TEST_POOL_RESET          0
+
+
+
+
+
 
 
 
@@ -1935,6 +2315,11 @@
 
 
 
+
+
+
+
+
 /**
  * Enable two independent pools test.
  * Creates two pools backed by separate buffers, allocates from each
@@ -1942,6 +2327,11 @@
  * used_count, alloc_count, and freelist remain completely unaffected.
  */
 #define TEST_POOL_TWO_POOLS      0
+
+
+
+
+
 
 
 
@@ -1981,6 +2371,11 @@
 
 
 
+
+
+
+
+
 /**
  * Enable pool stats mapping test.
  * Allocates 2 blocks and verifies the stats mapping: total_bytes
@@ -1988,6 +2383,11 @@
  * alloc_count equals 2, and peak_bytes equals block_size * 2.
  */
 #define TEST_POOL_STATS          0
+
+
+
+
+
 
 
 
@@ -2028,6 +2428,11 @@
 
 
 
+
+
+
+
+
 /**
  * Enable pool alloc within buffer test.
  * Allocates all blocks from a pool and verifies every returned
@@ -2036,6 +2441,11 @@
  * construction.
  */
 #define TEST_POOL_WITHIN_BUF     0
+
+
+
+
+
 
 
 
@@ -2090,6 +2500,11 @@
 
 
 
+
+
+
+
+
 /**
  * Enable TikuKits statistics tests.
  * Tests windowed statistics, Welford online variance, min/max
@@ -2113,12 +2528,22 @@
 
 
 
+
+
+
+
+
 /**
  * Enable TikuKits distance metric tests.
  * Tests Manhattan, squared Euclidean, dot product, squared cosine
  * similarity, Hamming distance, and null input handling.
  */
 #define TEST_KITS_DISTANCE 0
+
+
+
+
+
 
 
 
@@ -2158,6 +2583,11 @@
 
 
 
+
+
+
+
+
 /**
  * Enable TikuKits signal feature tests.
  * Tests peak detection, zero-crossing rate, histogram binning,
@@ -2165,6 +2595,11 @@
  * normalization, scaling, and null input handling.
  */
 #define TEST_KITS_SIGFEATURES 0
+
+
+
+
+
 
 
 
@@ -2203,19 +2638,65 @@
 
 
 
+
+
+
+
+
+/**
+ * Enable TikuKits ML linear regression tests.
+ * Tests perfect fit, non-zero intercept, fractional slope, prediction,
+ * R-squared, negative values, reset, edge cases, and null handling.
+ */
+#define TEST_KITS_ML_LINREG 1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/** Auto-derived: true if any TikuKits ML test is enabled */
+#define TEST_KITS_ML (TEST_KITS_ML_LINREG)
+
 /** Auto-derived: true if any TikuKits maths test is enabled */
 #define TEST_KITS_MATHS (TEST_KITS_MATRIX || TEST_KITS_STATISTICS ||        \
                          TEST_KITS_DISTANCE)
 
 /** Auto-derived: true if any TikuKits test is enabled */
 #define TEST_KITS (TEST_KITS_MATHS || TEST_KITS_SENSOR ||                   \
-                   TEST_KITS_SIGFEATURES || TEST_KITS_TEXTCOMPRESSION)
+                   TEST_KITS_SIGFEATURES || TEST_KITS_TEXTCOMPRESSION ||    \
+                   TEST_KITS_ML)
 
 #else /* HAS_TIKUKITS not defined */
 
 #define TEST_KITS           0
 #define TEST_KITS_MATHS     0
+#define TEST_KITS_ML        0
+#define TEST_KITS_ML_LINREG 1
+
+
+
 #define TEST_KITS_MATRIX    0
+
+
+
+
+
 
 
 
@@ -2247,7 +2728,17 @@
 
 
 
+
+
+
+
+
 #define TEST_KITS_DISTANCE  0
+
+
+
+
+
 
 
 
@@ -2279,7 +2770,17 @@
 
 
 
+
+
+
+
+
 #define TEST_KITS_SIGFEATURES 0
+
+
+
+
+
 
 
 
@@ -2312,6 +2813,11 @@
 
 
 
+
+
+
+
+
 #endif /* HAS_TIKUKITS */
 
 /*---------------------------------------------------------------------------*/
@@ -2323,7 +2829,7 @@
      !!TEST_MEM + !!TEST_PERSIST + !!TEST_MPU + !!TEST_POOL +               \
      !!TEST_REGION + !!TEST_KITS_MATRIX + !!TEST_KITS_STATISTICS +          \
      !!TEST_KITS_DISTANCE + !!TEST_KITS_SENSOR + !!TEST_KITS_SIGFEATURES + \
-     !!TEST_KITS_TEXTCOMPRESSION)
+     !!TEST_KITS_TEXTCOMPRESSION + !!TEST_KITS_ML_LINREG)
 
 #if TEST_ENABLE && (_TEST_CATEGORY_COUNT > 1)
 #error "Only one test category may be enabled at a time"

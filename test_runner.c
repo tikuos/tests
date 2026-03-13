@@ -65,6 +65,9 @@
 #if TEST_KITS_TEXTCOMPRESSION
 #include "tikukits/tests/textcompression/test_kits_textcompression.h"
 #endif
+#if TEST_KITS_ML
+#include "tikukits/tests/ml/test_kits_ml.h"
+#endif
 #endif /* HAS_TIKUKITS */
 
 /*---------------------------------------------------------------------------*/
@@ -692,6 +695,21 @@ static void test_run_kits(void)
     test_kits_textcomp_heatshrink();
     test_kits_textcomp_null();
     MAIN_PRINTF("Text compression tests completed\n");
+    tiku_common_delay_ms(TEST_DELAY_MS);
+#endif
+
+#if TEST_KITS_ML_LINREG
+    MAIN_PRINTF("Running TikuKits ML linear regression tests\n");
+    test_kits_ml_linreg_perfect_fit();
+    test_kits_ml_linreg_intercept();
+    test_kits_ml_linreg_fractional_slope();
+    test_kits_ml_linreg_predict();
+    test_kits_ml_linreg_r2();
+    test_kits_ml_linreg_negative_values();
+    test_kits_ml_linreg_reset();
+    test_kits_ml_linreg_edge_cases();
+    test_kits_ml_linreg_null_inputs();
+    MAIN_PRINTF("ML linear regression tests completed\n");
     tiku_common_delay_ms(TEST_DELAY_MS);
 #endif
 
