@@ -68,6 +68,9 @@
 #if TEST_KITS_ML
 #include "tikukits/tests/ml/test_kits_ml.h"
 #endif
+#if TEST_KITS_DS
+#include "tikukits/tests/ds/test_kits_ds.h"
+#endif
 #endif /* HAS_TIKUKITS */
 
 /*---------------------------------------------------------------------------*/
@@ -800,6 +803,171 @@ static void test_run_kits(void)
     test_kits_ml_tnn_reset();
     test_kits_ml_tnn_null_inputs();
     MAIN_PRINTF("ML Tiny Neural Network tests completed\n");
+    tiku_common_delay_ms(TEST_DELAY_MS);
+#endif
+
+#if TEST_KITS_DS_ARRAY
+    MAIN_PRINTF("Running TikuKits DS array tests\n");
+    test_kits_ds_array_init();
+    test_kits_ds_array_push_pop();
+    test_kits_ds_array_set_get();
+    test_kits_ds_array_insert_remove();
+    test_kits_ds_array_find();
+    test_kits_ds_array_fill();
+    test_kits_ds_array_bounds_check();
+    test_kits_ds_array_clear_reset();
+    test_kits_ds_array_null_inputs();
+    MAIN_PRINTF("DS array tests completed\n");
+    tiku_common_delay_ms(TEST_DELAY_MS);
+#endif
+
+#if TEST_KITS_DS_RINGBUF
+    MAIN_PRINTF("Running TikuKits DS ring buffer tests\n");
+    test_kits_ds_ringbuf_init();
+    test_kits_ds_ringbuf_push_pop();
+    test_kits_ds_ringbuf_wraparound();
+    test_kits_ds_ringbuf_peek();
+    test_kits_ds_ringbuf_full_empty();
+    test_kits_ds_ringbuf_overwrite_check();
+    test_kits_ds_ringbuf_count_tracking();
+    test_kits_ds_ringbuf_clear_reset();
+    test_kits_ds_ringbuf_null_inputs();
+    MAIN_PRINTF("DS ring buffer tests completed\n");
+    tiku_common_delay_ms(TEST_DELAY_MS);
+#endif
+
+#if TEST_KITS_DS_STACK
+    MAIN_PRINTF("Running TikuKits DS stack tests\n");
+    test_kits_ds_stack_init();
+    test_kits_ds_stack_push_pop();
+    test_kits_ds_stack_peek();
+    test_kits_ds_stack_overflow();
+    test_kits_ds_stack_underflow();
+    test_kits_ds_stack_size_tracking();
+    test_kits_ds_stack_lifo_order();
+    test_kits_ds_stack_clear_reset();
+    test_kits_ds_stack_null_inputs();
+    MAIN_PRINTF("DS stack tests completed\n");
+    tiku_common_delay_ms(TEST_DELAY_MS);
+#endif
+
+#if TEST_KITS_DS_QUEUE
+    MAIN_PRINTF("Running TikuKits DS queue tests\n");
+    test_kits_ds_queue_init();
+    test_kits_ds_queue_enqueue_dequeue();
+    test_kits_ds_queue_fifo_order();
+    test_kits_ds_queue_peek();
+    test_kits_ds_queue_full_empty();
+    test_kits_ds_queue_wraparound();
+    test_kits_ds_queue_size_tracking();
+    test_kits_ds_queue_clear_reset();
+    test_kits_ds_queue_null_inputs();
+    MAIN_PRINTF("DS queue tests completed\n");
+    tiku_common_delay_ms(TEST_DELAY_MS);
+#endif
+
+#if TEST_KITS_DS_PQUEUE
+    MAIN_PRINTF("Running TikuKits DS priority queue tests\n");
+    test_kits_ds_pqueue_init();
+    test_kits_ds_pqueue_basic_priority();
+    test_kits_ds_pqueue_multi_level();
+    test_kits_ds_pqueue_dequeue_order();
+    test_kits_ds_pqueue_peek();
+    test_kits_ds_pqueue_full_level();
+    test_kits_ds_pqueue_empty_check();
+    test_kits_ds_pqueue_clear_reset();
+    test_kits_ds_pqueue_null_inputs();
+    MAIN_PRINTF("DS priority queue tests completed\n");
+    tiku_common_delay_ms(TEST_DELAY_MS);
+#endif
+
+#if TEST_KITS_DS_LIST
+    MAIN_PRINTF("Running TikuKits DS linked list tests\n");
+    test_kits_ds_list_init();
+    test_kits_ds_list_push_front_pop();
+    test_kits_ds_list_push_back();
+    test_kits_ds_list_insert_after();
+    test_kits_ds_list_remove_node();
+    test_kits_ds_list_find();
+    test_kits_ds_list_traversal();
+    test_kits_ds_list_clear_reset();
+    test_kits_ds_list_null_inputs();
+    MAIN_PRINTF("DS linked list tests completed\n");
+    tiku_common_delay_ms(TEST_DELAY_MS);
+#endif
+
+#if TEST_KITS_DS_HTABLE
+    MAIN_PRINTF("Running TikuKits DS hash table tests\n");
+    test_kits_ds_htable_init();
+    test_kits_ds_htable_put_get();
+    test_kits_ds_htable_update_existing();
+    test_kits_ds_htable_remove_tombstone();
+    test_kits_ds_htable_contains();
+    test_kits_ds_htable_collision_handling();
+    test_kits_ds_htable_full_table();
+    test_kits_ds_htable_clear_reset();
+    test_kits_ds_htable_null_inputs();
+    MAIN_PRINTF("DS hash table tests completed\n");
+    tiku_common_delay_ms(TEST_DELAY_MS);
+#endif
+
+#if TEST_KITS_DS_BITMAP
+    MAIN_PRINTF("Running TikuKits DS bitmap tests\n");
+    test_kits_ds_bitmap_init();
+    test_kits_ds_bitmap_set_clear_test();
+    test_kits_ds_bitmap_toggle();
+    test_kits_ds_bitmap_set_all_clear_all();
+    test_kits_ds_bitmap_count_set_clear();
+    test_kits_ds_bitmap_find_first_set();
+    test_kits_ds_bitmap_find_first_clear();
+    test_kits_ds_bitmap_boundary_bits();
+    test_kits_ds_bitmap_null_inputs();
+    MAIN_PRINTF("DS bitmap tests completed\n");
+    tiku_common_delay_ms(TEST_DELAY_MS);
+#endif
+
+#if TEST_KITS_DS_SORTARRAY
+    MAIN_PRINTF("Running TikuKits DS sorted array tests\n");
+    test_kits_ds_sortarray_init();
+    test_kits_ds_sortarray_insert_sorted();
+    test_kits_ds_sortarray_remove_element();
+    test_kits_ds_sortarray_find_binary_search();
+    test_kits_ds_sortarray_get_by_index();
+    test_kits_ds_sortarray_min_max();
+    test_kits_ds_sortarray_duplicates();
+    test_kits_ds_sortarray_contains();
+    test_kits_ds_sortarray_null_inputs();
+    MAIN_PRINTF("DS sorted array tests completed\n");
+    tiku_common_delay_ms(TEST_DELAY_MS);
+#endif
+
+#if TEST_KITS_DS_BTREE
+    MAIN_PRINTF("Running TikuKits DS B-tree tests\n");
+    test_kits_ds_btree_init();
+    test_kits_ds_btree_insert_single();
+    test_kits_ds_btree_insert_multiple();
+    test_kits_ds_btree_search_found();
+    test_kits_ds_btree_search_not_found();
+    test_kits_ds_btree_min_max();
+    test_kits_ds_btree_split_root();
+    test_kits_ds_btree_height();
+    test_kits_ds_btree_null_inputs();
+    MAIN_PRINTF("DS B-tree tests completed\n");
+    tiku_common_delay_ms(TEST_DELAY_MS);
+#endif
+
+#if TEST_KITS_DS_SM
+    MAIN_PRINTF("Running TikuKits DS state machine tests\n");
+    test_kits_ds_sm_init();
+    test_kits_ds_sm_set_transition();
+    test_kits_ds_sm_process_event();
+    test_kits_ds_sm_action_called();
+    test_kits_ds_sm_undefined_transition();
+    test_kits_ds_sm_state_get_set();
+    test_kits_ds_sm_multi_state();
+    test_kits_ds_sm_reset_clear();
+    test_kits_ds_sm_null_inputs();
+    MAIN_PRINTF("DS state machine tests completed\n");
     tiku_common_delay_ms(TEST_DELAY_MS);
 #endif
 
