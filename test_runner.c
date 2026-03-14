@@ -713,6 +713,96 @@ static void test_run_kits(void)
     tiku_common_delay_ms(TEST_DELAY_MS);
 #endif
 
+#if TEST_KITS_ML_LOGREG
+    MAIN_PRINTF("Running TikuKits ML logistic regression tests\n");
+    test_kits_ml_logreg_init();
+    test_kits_ml_logreg_pretrained();
+    test_kits_ml_logreg_sigmoid_saturation();
+    test_kits_ml_logreg_sigmoid_midpoint();
+    test_kits_ml_logreg_training();
+    test_kits_ml_logreg_two_features();
+    test_kits_ml_logreg_reset();
+    test_kits_ml_logreg_learning_rate();
+    test_kits_ml_logreg_null_inputs();
+    MAIN_PRINTF("ML logistic regression tests completed\n");
+    tiku_common_delay_ms(TEST_DELAY_MS);
+#endif
+
+#if TEST_KITS_ML_DTREE
+    MAIN_PRINTF("Running TikuKits ML decision tree tests\n");
+    test_kits_ml_dtree_init();
+    test_kits_ml_dtree_simple_tree();
+    test_kits_ml_dtree_multi_feature();
+    test_kits_ml_dtree_depth();
+    test_kits_ml_dtree_predict_proba();
+    test_kits_ml_dtree_boundary();
+    test_kits_ml_dtree_get_tree();
+    test_kits_ml_dtree_reset();
+    test_kits_ml_dtree_null_inputs();
+    MAIN_PRINTF("ML decision tree tests completed\n");
+    tiku_common_delay_ms(TEST_DELAY_MS);
+#endif
+
+#if TEST_KITS_ML_KNN
+    MAIN_PRINTF("Running TikuKits ML k-NN tests\n");
+    test_kits_ml_knn_init();
+    test_kits_ml_knn_simple();
+    test_kits_ml_knn_two_features();
+    test_kits_ml_knn_k1();
+    test_kits_ml_knn_change_k();
+    test_kits_ml_knn_overflow();
+    test_kits_ml_knn_negative();
+    test_kits_ml_knn_reset();
+    test_kits_ml_knn_null_inputs();
+    MAIN_PRINTF("ML k-NN tests completed\n");
+    tiku_common_delay_ms(TEST_DELAY_MS);
+#endif
+
+#if TEST_KITS_ML_NBAYES
+    MAIN_PRINTF("Running TikuKits ML Naive Bayes tests\n");
+    test_kits_ml_nbayes_init();
+    test_kits_ml_nbayes_simple();
+    test_kits_ml_nbayes_two_features();
+    test_kits_ml_nbayes_three_class();
+    test_kits_ml_nbayes_log_proba();
+    test_kits_ml_nbayes_smoothing();
+    test_kits_ml_nbayes_imbalanced();
+    test_kits_ml_nbayes_reset();
+    test_kits_ml_nbayes_null_inputs();
+    MAIN_PRINTF("ML Naive Bayes tests completed\n");
+    tiku_common_delay_ms(TEST_DELAY_MS);
+#endif
+
+#if TEST_KITS_ML_LINSVM
+    MAIN_PRINTF("Running TikuKits ML Linear SVM tests\n");
+    test_kits_ml_linsvm_init();
+    test_kits_ml_linsvm_pretrained();
+    test_kits_ml_linsvm_decision();
+    test_kits_ml_linsvm_training();
+    test_kits_ml_linsvm_two_features();
+    test_kits_ml_linsvm_learning_rate();
+    test_kits_ml_linsvm_lambda();
+    test_kits_ml_linsvm_reset();
+    test_kits_ml_linsvm_null_inputs();
+    MAIN_PRINTF("ML Linear SVM tests completed\n");
+    tiku_common_delay_ms(TEST_DELAY_MS);
+#endif
+
+#if TEST_KITS_ML_TNN
+    MAIN_PRINTF("Running TikuKits ML Tiny Neural Network tests\n");
+    test_kits_ml_tnn_init();
+    test_kits_ml_tnn_pretrained();
+    test_kits_ml_tnn_forward_pass();
+    test_kits_ml_tnn_training();
+    test_kits_ml_tnn_three_class();
+    test_kits_ml_tnn_learning_rate();
+    test_kits_ml_tnn_weight_access();
+    test_kits_ml_tnn_reset();
+    test_kits_ml_tnn_null_inputs();
+    MAIN_PRINTF("ML Tiny Neural Network tests completed\n");
+    tiku_common_delay_ms(TEST_DELAY_MS);
+#endif
+
     MAIN_PRINTF("=== TikuKits tests completed ===\n");
 #endif /* TEST_KITS */
 }
