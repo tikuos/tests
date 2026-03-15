@@ -971,6 +971,66 @@ static void test_run_kits(void)
     tiku_common_delay_ms(TEST_DELAY_MS);
 #endif
 
+#if TEST_KITS_DS_BLOOM
+    MAIN_PRINTF("Running TikuKits DS bloom filter tests\n");
+    test_kits_ds_bloom_init();
+    test_kits_ds_bloom_add_check();
+    test_kits_ds_bloom_check_absent();
+    test_kits_ds_bloom_multiple_keys();
+    test_kits_ds_bloom_clear_reset();
+    test_kits_ds_bloom_count_tracking();
+    test_kits_ds_bloom_different_hashes();
+    test_kits_ds_bloom_binary_keys();
+    test_kits_ds_bloom_null_inputs();
+    MAIN_PRINTF("DS bloom filter tests completed\n");
+    tiku_common_delay_ms(TEST_DELAY_MS);
+#endif
+
+#if TEST_KITS_DS_CIRCLOG
+    MAIN_PRINTF("Running TikuKits DS circular log tests\n");
+    test_kits_ds_circlog_init();
+    test_kits_ds_circlog_append_read();
+    test_kits_ds_circlog_multiple_entries();
+    test_kits_ds_circlog_wraparound();
+    test_kits_ds_circlog_read_at_order();
+    test_kits_ds_circlog_sequence();
+    test_kits_ds_circlog_clear_reset();
+    test_kits_ds_circlog_payload();
+    test_kits_ds_circlog_null_inputs();
+    MAIN_PRINTF("DS circular log tests completed\n");
+    tiku_common_delay_ms(TEST_DELAY_MS);
+#endif
+
+#if TEST_KITS_DS_DEQUE
+    MAIN_PRINTF("Running TikuKits DS deque tests\n");
+    test_kits_ds_deque_init();
+    test_kits_ds_deque_push_pop_front();
+    test_kits_ds_deque_push_pop_back();
+    test_kits_ds_deque_mixed_ops();
+    test_kits_ds_deque_peek();
+    test_kits_ds_deque_random_access();
+    test_kits_ds_deque_full_empty();
+    test_kits_ds_deque_clear_reset();
+    test_kits_ds_deque_null_inputs();
+    MAIN_PRINTF("DS deque tests completed\n");
+    tiku_common_delay_ms(TEST_DELAY_MS);
+#endif
+
+#if TEST_KITS_DS_TRIE
+    MAIN_PRINTF("Running TikuKits DS trie tests\n");
+    test_kits_ds_trie_init();
+    test_kits_ds_trie_insert_search();
+    test_kits_ds_trie_search_absent();
+    test_kits_ds_trie_contains();
+    test_kits_ds_trie_multiple_keys();
+    test_kits_ds_trie_remove();
+    test_kits_ds_trie_overwrite();
+    test_kits_ds_trie_clear_reset();
+    test_kits_ds_trie_null_inputs();
+    MAIN_PRINTF("DS trie tests completed\n");
+    tiku_common_delay_ms(TEST_DELAY_MS);
+#endif
+
     MAIN_PRINTF("=== TikuKits tests completed ===\n");
 #endif /* TEST_KITS */
 }

@@ -39,6 +39,10 @@
 #include "tikukits/ds/sortarray/tiku_kits_ds_sortarray.h"
 #include "tikukits/ds/btree/tiku_kits_ds_btree.h"
 #include "tikukits/ds/sm/tiku_kits_ds_sm.h"
+#include "tikukits/ds/bloom/tiku_kits_ds_bloom.h"
+#include "tikukits/ds/circlog/tiku_kits_ds_circlog.h"
+#include "tikukits/ds/deque/tiku_kits_ds_deque.h"
+#include "tikukits/ds/trie/tiku_kits_ds_trie.h"
 
 /*---------------------------------------------------------------------------*/
 /* ARRAY TESTS                                                               */
@@ -193,5 +197,61 @@ void test_kits_ds_sm_state_get_set(void);
 void test_kits_ds_sm_multi_state(void);
 void test_kits_ds_sm_reset_clear(void);
 void test_kits_ds_sm_null_inputs(void);
+
+/*---------------------------------------------------------------------------*/
+/* BLOOM FILTER TESTS                                                        */
+/*---------------------------------------------------------------------------*/
+
+void test_kits_ds_bloom_init(void);
+void test_kits_ds_bloom_add_check(void);
+void test_kits_ds_bloom_check_absent(void);
+void test_kits_ds_bloom_multiple_keys(void);
+void test_kits_ds_bloom_clear_reset(void);
+void test_kits_ds_bloom_count_tracking(void);
+void test_kits_ds_bloom_different_hashes(void);
+void test_kits_ds_bloom_binary_keys(void);
+void test_kits_ds_bloom_null_inputs(void);
+
+/*---------------------------------------------------------------------------*/
+/* CIRCULAR LOG TESTS                                                        */
+/*---------------------------------------------------------------------------*/
+
+void test_kits_ds_circlog_init(void);
+void test_kits_ds_circlog_append_read(void);
+void test_kits_ds_circlog_multiple_entries(void);
+void test_kits_ds_circlog_wraparound(void);
+void test_kits_ds_circlog_read_at_order(void);
+void test_kits_ds_circlog_sequence(void);
+void test_kits_ds_circlog_clear_reset(void);
+void test_kits_ds_circlog_payload(void);
+void test_kits_ds_circlog_null_inputs(void);
+
+/*---------------------------------------------------------------------------*/
+/* DEQUE TESTS                                                               */
+/*---------------------------------------------------------------------------*/
+
+void test_kits_ds_deque_init(void);
+void test_kits_ds_deque_push_pop_front(void);
+void test_kits_ds_deque_push_pop_back(void);
+void test_kits_ds_deque_mixed_ops(void);
+void test_kits_ds_deque_peek(void);
+void test_kits_ds_deque_random_access(void);
+void test_kits_ds_deque_full_empty(void);
+void test_kits_ds_deque_clear_reset(void);
+void test_kits_ds_deque_null_inputs(void);
+
+/*---------------------------------------------------------------------------*/
+/* TRIE TESTS                                                                */
+/*---------------------------------------------------------------------------*/
+
+void test_kits_ds_trie_init(void);
+void test_kits_ds_trie_insert_search(void);
+void test_kits_ds_trie_search_absent(void);
+void test_kits_ds_trie_contains(void);
+void test_kits_ds_trie_multiple_keys(void);
+void test_kits_ds_trie_remove(void);
+void test_kits_ds_trie_overwrite(void);
+void test_kits_ds_trie_clear_reset(void);
+void test_kits_ds_trie_null_inputs(void);
 
 #endif /* TEST_KITS_DS_H_ */
