@@ -54,22 +54,22 @@
 
 #if defined(HAS_TIKUKITS)
 #if TEST_KITS_MATHS
-#include "tikukits/tests/maths/test_kits_maths.h"
+#include "tests/kits/maths/test_kits_maths.h"
 #endif
 #if TEST_KITS_SENSOR
-#include "tikukits/tests/sensors/test_kits_sensor.h"
+#include "tests/kits/sensors/test_kits_sensor.h"
 #endif
 #if TEST_KITS_SIGFEATURES
-#include "tikukits/tests/sigfeatures/test_kits_sigfeatures.h"
+#include "tests/kits/sigfeatures/test_kits_sigfeatures.h"
 #endif
 #if TEST_KITS_TEXTCOMPRESSION
-#include "tikukits/tests/textcompression/test_kits_textcompression.h"
+#include "tests/kits/textcompression/test_kits_textcompression.h"
 #endif
 #if TEST_KITS_ML
-#include "tikukits/tests/ml/test_kits_ml.h"
+#include "tests/kits/ml/test_kits_ml.h"
 #endif
 #if TEST_KITS_DS
-#include "tikukits/tests/ds/test_kits_ds.h"
+#include "tests/kits/ds/test_kits_ds.h"
 #endif
 #endif /* HAS_TIKUKITS */
 
